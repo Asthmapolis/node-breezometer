@@ -7,8 +7,7 @@ const _             = require('underscore');
 const packageJson   = require('./package.json');
 
 // constants
-const DEFAULT_LANGUAGE = 'us';
-const MAX_INTERVAL = 60000;
+const MAX_RETRY_INTERVAL = 60000;
 
 /**
 * breezometerClientConstructor
@@ -17,9 +16,9 @@ const MAX_INTERVAL = 60000;
 * @param {String} [options.baseUri=https://api.breezometer.com] base Uri of the Breezometer API
 * @param {Number} [options.timeout=60000] Client timeout for a HTTP response from the Breezometer API
 * @param {Number} [options.retryTimes=10] Number of times to retry a failed request
+* @param {Object} [options.logger] An object that responds to node module bunyan log levels like .debug() or .error()
 */
 module.exports = function breezometerClientConstructor(options){
-
     
     if (_.isUndefined(options) || _.isNull(options)){
         options = {}
@@ -38,15 +37,24 @@ module.exports = function breezometerClientConstructor(options){
         headers: _.defaults(options.headers, {
 			"User-Agent": "node-breezometer/" +packageJson.version
         }),
-        retryTimes: 10
+        retryTimes: 10,
+        logger: {
+            fatal: _.noop,
+            error: _.noop,
+            warn: _.noop,
+            info: _.noop,
+            debug: _.noop,
+            trace: _.noop
+        }
     });
 
     // save some goodies
     let apiKey = options.apiKey;
     let retryTimes = options.retryTimes;
+    let logger = options.logger;
 	
 	// build a base request object
-	let baseRequest = request.defaults(_.omit(options, ['apiKey', 'retryTimes']));
+	let baseRequest = request.defaults(_.omit(options, ['apiKey', 'retryTimes', logger]));
     
     return {
 
@@ -71,23 +79,31 @@ module.exports = function breezometerClientConstructor(options){
 
             // set the defaults
 			_.defaults(options, {
-                key: apiKey,
-                lang: DEFAULT_LANGUAGE
+                key: apiKey
             });
 			
 			// send with exponential backoff
 			async.retry({ 
                 times: retryTimes, 
-                interval: (retryCount)=>{
-                    return Math.min(50 * Math.pow(2, retryCount, MAX_INTERVAL));
+                interval: function getRetryInterval(retryCount){
+                    return Math.min(50 * Math.pow(2, retryCount), MAX_RETRY_INTERVAL);
                 }
             }, function(callback){
 				baseRequest({
 					uri: "baqi/",
 					qs: options,
 					json: true
-				}, function(err, message, body){
-					callback(err, body);
+				}, function getAirQualityHTTPResponse(err, message, body){
+                    if (!_.isUndefined(err) && !_.isNull(err)){
+                        logger.error(err, 'Error calling Breezometer getAirQuality');
+                        callback(err);
+                    } else if (message.statusCode !== 200){
+                        logger.error({statusCode:statusCode, body: message.body},
+                            'Did not receive a 200 status code from Breezometer getAirQuality');
+                        callback(new Error('Did not receive a HTTP 200 from Breezometer getAirQuality. Error:'+message.body));
+                    } else {
+                        callback(err, body);
+                    }
 				});
 			}, callback);
         },
@@ -115,23 +131,31 @@ module.exports = function breezometerClientConstructor(options){
 
             // set the defaults
 			_.defaults(options, {
-                key: apiKey,
-                lang: DEFAULT_LANGUAGE
+                key: apiKey
             });
 			
 			// send with exponential backoff
 			async.retry({ 
                 times: retryTimes, 
-                interval: (retryCount)=>{
-                    return Math.min(50 * Math.pow(2, retryCount, MAX_INTERVAL));
+                interval: function getRetryInterval(retryCount){
+                    return Math.min(50 * Math.pow(2, retryCount), MAX_RETRY_INTERVAL);
                 }
             }, function(callback){
 				baseRequest({
 					uri: "baqi/",
 					qs: options,
 					json: true
-				}, function(err, message, body){
-					callback(err, body);
+				}, function getHistoricalAirQuailityHTTPResponse(err, message, body){
+					if (!_.isUndefined(err) && !_.isNull(err)){
+                        logger.error(err, 'Error calling Breezometer getHistoricalAirQuaility');
+                        callback(err);
+                    } else if (message.statusCode !== 200){
+                        logger.error({statusCode:statusCode, body: message.body},
+                            'Did not receive a 200 status code from Breezometer getHistoricalAirQuaility');
+                        callback(new Error('Did not receive a HTTP 200 from Breezometer getHistoricalAirQuaility. Error:'+message.body));
+                    } else {
+                        callback(err, body);
+                    }
 				});
 			}, callback);
         },
@@ -158,23 +182,31 @@ module.exports = function breezometerClientConstructor(options){
             
             // set the defaults
 			_.defaults(options, {
-                key: apiKey,
-                lang: DEFAULT_LANGUAGE
+                key: apiKey
             });
 			
 			// send with exponential backoff
 			async.retry({ 
                 times: retryTimes, 
-                interval: (retryCount)=>{
-                    return Math.min(50 * Math.pow(2, retryCount, MAX_INTERVAL));
+                interval: function getRetryInterval(retryCount){
+                    return Math.min(50 * Math.pow(2, retryCount), MAX_RETRY_INTERVAL);
                 }
             }, function(callback){
 				baseRequest({
 					uri: "forecast/",
 					qs: options,
 					json: true
-				}, function(err, message, body){
-					callback(err, body);
+				}, function getForecastHTTPResponse(err, message, body){
+					if (!_.isUndefined(err) && !_.isNull(err)){
+                        logger.error(err, 'Error calling Breezometer getForecast');
+                        callback(err);
+                    } else if (message.statusCode !== 200){
+                        logger.error({statusCode:statusCode, body: message.body},
+                            'Did not receive a 200 status code from Breezometer getForecast');
+                        callback(new Error('Did not receive a HTTP 200 from Breezometer getForecast. Error:'+message.body));
+                    } else {
+                        callback(err, body);
+                    }
 				});
 			}, callback);
         }
