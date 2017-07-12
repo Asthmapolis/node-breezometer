@@ -90,7 +90,7 @@ module.exports = function breezometerClientConstructor(options){
                 }
             }, function(callback){
 				baseRequest({
-					uri: "baqi/",
+					uri: "baqi/?",
 					qs: options,
 					json: true
 				}, function getAirQualityHTTPResponse(err, message, body){
@@ -142,7 +142,7 @@ module.exports = function breezometerClientConstructor(options){
                 }
             }, function(callback){
 				baseRequest({
-					uri: "baqi/",
+					uri: "baqi/?",
 					qs: options,
 					json: true
 				}, function getHistoricalAirQuailityHTTPResponse(err, message, body){
@@ -193,7 +193,7 @@ module.exports = function breezometerClientConstructor(options){
                 }
             }, function(callback){
 				baseRequest({
-					uri: "forecast/",
+					uri: "forecast/?",
 					qs: options,
 					json: true
 				}, function getForecastHTTPResponse(err, message, body){
