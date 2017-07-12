@@ -163,7 +163,7 @@ module.exports = function breezometerClientConstructor(options){
         /** callback for getForecast
 		* @callback module:breezometer/client~getForecastCallback
 		* @param {Object} [err] error calling Breezometer
-		* @param {Object} [result] Forecast
+		* @param {Object} [result] Forecasts
 		*/
 		/**
 		* @func getForecastCallback
@@ -171,7 +171,9 @@ module.exports = function breezometerClientConstructor(options){
         * @param {Number} options.lat WGS84 standard latitude
         * @param {Number} options.lng WGS84 standard longitude
         * @param {String} [options.lang=en] language used for the request 
-        * @param {Date} [options.hours=24{1,24}] Number of hourly forecasts to receive   
+        * @param {Number} [options.hours=24{1,24}] Number of hourly forecasts to receive from now
+        * @param {Date} [options.startDate] A specific start date range to get predictions for.  Can not be used with hours
+        * @param {Date} [options.endDate] A specific start date range to get predictions for.  Can not be used with hours 
         * @param {module:breezometer/client~getForecastCallback} [callback] callback
 		*/
         getForecast: function getForecast(options, callback){
@@ -179,6 +181,8 @@ module.exports = function breezometerClientConstructor(options){
             if (_.isUndefined(options) || _.isNull(options)) return callback(new Error('Invalid options object'));
             if (!_.has(options, 'lat') || !_.isNumber(options.lat)) return callback(new Error('Invalid lat'));
             if (!_.has(options, 'lon') || !_.isNumber(options.lon)) return callback(new Error('Invalid lon'));
+            if (_.has(options, 'hours') && (_.has(options, 'startDate') || _.has(options, 'endDate'))) return callback(new Error("Can't set hours and start and end date"));
+            if ((_.has(options, 'startDate') || _.has(options, 'endDate')) && !(_.has(options, 'startDate') && _.has(options, 'endDate'))) return callback(new Error('must set both staartDate and endDate'));  
             
             // set the defaults
 			_.defaults(options, {
