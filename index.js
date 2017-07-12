@@ -29,7 +29,7 @@ module.exports = function breezometerClientConstructor(options){
     }
 
     options = _.defaults(options, {
-        baseUri: "https://api.breezometer.com/",
+        baseUrl: "https://api.breezometer.com/",
         uri: "",
         timeout: 60000,
         method: "GET",
