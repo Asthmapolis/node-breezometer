@@ -188,6 +188,14 @@ module.exports = function breezometerClientConstructor(options){
 			_.defaults(options, {
                 key: apiKey
             });
+
+            if (_.has(options, 'startDate') && _.has(options, 'endDate')){
+                // camel case -> c style
+                options.start_date = options.startDate;
+                options.end_date = options.endDate;
+                delete options.startDate;
+                delete options.endDate;
+            }
 			
 			// send with exponential backoff
 			async.retry({ 
