@@ -54,7 +54,7 @@ module.exports = function breezometerClientConstructor(options){
     let logger = options.logger;
 	
 	// build a base request object
-	let baseRequest = request.defaults(_.omit(options, ['apiKey', 'retryTimes', logger]));
+	let baseRequest = request.defaults(_.omit(options, ['apiKey', 'retryTimes', "logger"]));
     
     return {
 
