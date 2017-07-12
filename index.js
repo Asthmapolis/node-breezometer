@@ -13,7 +13,7 @@ const MAX_RETRY_INTERVAL = 60000;
 * breezometerClientConstructor
 * @param {Object} [options] object containing the Breezometer API client options
 * @param {String} options.apiKey API key for Breezometer's API
-* @param {String} [options.baseUri=https://api.breezometer.com] base Uri of the Breezometer API
+* @param {String} [options.baseUri=https://api.breezometer.com/] base Uri of the Breezometer API
 * @param {Number} [options.timeout=60000] Client timeout for a HTTP response from the Breezometer API
 * @param {Number} [options.retryTimes=10] Number of times to retry a failed request
 * @param {Object} [options.logger] An object that responds to node module bunyan log levels like .debug() or .error()
@@ -29,7 +29,7 @@ module.exports = function breezometerClientConstructor(options){
     }
 
     options = _.defaults(options, {
-        baseUri: "https://api.breezometer.com",
+        baseUri: "https://api.breezometer.com/",
         uri: "",
         timeout: 60000,
         method: "GET",
