@@ -105,7 +105,7 @@ module.exports = function breezometerClientConstructor(options){
                                 logger.error(err, 'Error calling Breezometer getAirQuality');
                                 callback(err);
                             } else if (message.statusCode !== 200){
-                                logger.error({statusCode:statusCode, body: message.body},
+                                logger.error({statusCode:message.statusCode, body: message.body},
                                     'Did not receive a 200 status code from Breezometer getAirQuality');
                                 callback(new Error('Did not receive a HTTP 200 from Breezometer getAirQuality. Error:'+message.body));
                             } else {
@@ -177,7 +177,7 @@ module.exports = function breezometerClientConstructor(options){
                                 logger.error(err, 'Error calling Breezometer getHistoricalAirQuaility');
                                 callback(err);
                             } else if (message.statusCode !== 200){
-                                logger.error({statusCode:statusCode, body: message.body},
+                                logger.error({statusCode:message.statusCode, body: message.body},
                                     'Did not receive a 200 status code from Breezometer getHistoricalAirQuaility');
                                 callback(new Error('Did not receive a HTTP 200 from Breezometer getHistoricalAirQuaility. Error:'+message.body));
                             } else {
@@ -245,7 +245,7 @@ module.exports = function breezometerClientConstructor(options){
                                 logger.error(err, 'Error calling Breezometer getForecast');
                                 callback(err);
                             } else if (message.statusCode !== 200){
-                                logger.error({statusCode:statusCode, body: message.body},
+                                logger.error({statusCode:message.statusCode, body: message.body},
                                     'Did not receive a 200 status code from Breezometer getForecast');
                                 callback(new Error('Did not receive a HTTP 200 from Breezometer getForecast. Error:'+message.body));
                             } else {
