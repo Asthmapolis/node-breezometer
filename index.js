@@ -119,7 +119,10 @@ module.exports = function breezometerClientConstructor(options){
         * @param {Number} options.lat WGS84 standard latitude
         * @param {Number} options.lng WGS84 standard longitude
         * @param {String} [options.lang=en] language used for the request 
-        * @param {Date} options.datetime ISO8601 date and time you want historical air quality for 
+        * @param {Date} [options.datetime] ISO8601 date and time you want historical air quality for
+        * @param {Date} [options.startDate] ISO8601 start date for a range of historical air quality results
+        * @param {Date} [options.endDate] ISO8601 end date for a range of historical air quality results
+        * @param {Number} [options.interval] A time interval represents a period of time (hours) between two BAQI objects. You can choose an interval value (Integer) between 1-24 hours
         * @param {module:breezometer/client~getHistoricalAirQuailityCallback} [callback] callback
 		*/
         getHistoricalAirQuaility: function getHistoricalAirQuaility(options, callback){
@@ -127,12 +130,22 @@ module.exports = function breezometerClientConstructor(options){
             if (_.isUndefined(options) || _.isNull(options)) return callback(new Error('Invalid options object'));
             if (!_.has(options, 'lat') || !_.isNumber(options.lat)) return callback(new Error('Invalid lat'));
             if (!_.has(options, 'lon') || !_.isNumber(options.lon)) return callback(new Error('Invalid lon'));
-            if (!_.has(options, 'datetime') || !_.isDate(options.datetime)) return callback(new Error('Invalid datetime'));
-
+            if (!_.has(options, 'datetime') && !_.has(options, 'startDate') && !_.has(options, 'endDate')) return callback(new Error('datetime or startDate and endDate are required'));
+            if (_.has(options, 'datetime') || !_.isDate(options.datetime)) return callback(new Error('Invalid datetime'));
+            if ((_.has(options, 'startDate') || _.has(options, 'endDate')) && !(_.has(options, 'startDate') && _.has(options, 'endDate'))) return callback(new Error('must set both startDate and endDate'));  
+            
             // set the defaults
 			_.defaults(options, {
                 key: apiKey
             });
+
+            if (_.has(options, 'startDate') && _.has(options, 'endDate')){
+                // camel case -> c style
+                options.start_datetime = options.startDate;
+                options.end_datetime = options.endDate;
+                delete options.startDate;
+                delete options.endDate;
+            }
 			
 			// send with exponential backoff
 			async.retry({ 
@@ -173,7 +186,7 @@ module.exports = function breezometerClientConstructor(options){
         * @param {String} [options.lang=en] language used for the request 
         * @param {Number} [options.hours=24{1,24}] Number of hourly forecasts to receive from now
         * @param {Date} [options.startDate] A specific start date range to get predictions for.  Can not be used with hours
-        * @param {Date} [options.endDate] A specific start date range to get predictions for.  Can not be used with hours 
+        * @param {Date} [options.endDate] A specific end date range to get predictions for.  Can not be used with hours 
         * @param {module:breezometer/client~getForecastCallback} [callback] callback
 		*/
         getForecast: function getForecast(options, callback){
@@ -182,7 +195,7 @@ module.exports = function breezometerClientConstructor(options){
             if (!_.has(options, 'lat') || !_.isNumber(options.lat)) return callback(new Error('Invalid lat'));
             if (!_.has(options, 'lon') || !_.isNumber(options.lon)) return callback(new Error('Invalid lon'));
             if (_.has(options, 'hours') && (_.has(options, 'startDate') || _.has(options, 'endDate'))) return callback(new Error("Can't set hours and start and end date"));
-            if ((_.has(options, 'startDate') || _.has(options, 'endDate')) && !(_.has(options, 'startDate') && _.has(options, 'endDate'))) return callback(new Error('must set both staartDate and endDate'));  
+            if ((_.has(options, 'startDate') || _.has(options, 'endDate')) && !(_.has(options, 'startDate') && _.has(options, 'endDate'))) return callback(new Error('must set both startDate and endDate'));  
             
             // set the defaults
 			_.defaults(options, {
@@ -191,8 +204,8 @@ module.exports = function breezometerClientConstructor(options){
 
             if (_.has(options, 'startDate') && _.has(options, 'endDate')){
                 // camel case -> c style
-                options.start_date = options.startDate;
-                options.end_date = options.endDate;
+                options.start_datetime = options.startDate;
+                options.end_datetime = options.endDate;
                 delete options.startDate;
                 delete options.endDate;
             }
