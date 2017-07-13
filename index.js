@@ -9,6 +9,7 @@ const packageJson   = require('./package.json');
 
 // constants
 const MAX_RETRY_INTERVAL = 60000;
+const NOW_BUFFER = 1000;
 
 /**
 * breezometerClientConstructor
@@ -142,9 +143,9 @@ module.exports = function breezometerClientConstructor(options){
                 lon: Joi.number().min(-180).max(180).required(),
                 lang: Joi.string().empty('').empty(null).valid(['en','he']).optional(),
                 key: Joi.string().default(apiKey).forbidden(),
-                datetime: Joi.date().max('now').optional(),
+                datetime: Joi.date().max(new Date(Date.now() - NOW_BUFFER)).optional(),
                 start_datetime: Joi.date().max(Joi.ref('end_datetime')).optional(),
-                end_datetime: Joi.date().max('now').optional(),
+                end_datetime: Joi.date().max(new Date(Date.now() - NOW_BUFFER)).optional(),
                 interval: Joi.number().min(1).max(24).optional()
             })
             .rename('dateTime', 'datetime')
@@ -214,7 +215,7 @@ module.exports = function breezometerClientConstructor(options){
                 lang: Joi.string().empty('').empty(null).valid(['en','he']).optional(),
                 key: Joi.string().default(apiKey).forbidden(),
                 hours: Joi.number().integer().min(1).max(24).optional(),
-                start_datetime: Joi.date().min('now').optional(),
+                start_datetime: Joi.date().min(new Date(Date.now() - NOW_BUFFER)).optional(),
                 end_datetime: Joi.date().min(Joi.ref('start_datetime')).optional()
             })
             .rename('startDate', 'start_datetime')
