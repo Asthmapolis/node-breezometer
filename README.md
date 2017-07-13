@@ -18,8 +18,8 @@ client.getAirQuality({ lat: 43.067475, lon:-89.392808 }, function(err, data){
 	
 });
 
-// get the historical air quality for a datetime
-client.getHistoricalAirQuaility({ lat: 43.067475, lon:-89.392808, datetime: new Date(Date.now() - 864000000) }, function(err, data){
+// get the historical air quality for a dateTime
+client.getHistoricalAirQuaility({ lat: 43.067475, lon:-89.392808, dateTime: new Date(Date.now() - 864000000) }, function(err, data){
 	
 });
 
@@ -93,10 +93,10 @@ const client = breezometer({ apiKey: 'my breezometer API key' });
 var options = {
 	lat: 43.067475,
 	lon:-89.392808,
-	datetime: new Date(Date.now() - 864000000)
+	dateTime: new Date(Date.now() - 864000000)
 };
 
-// get the historical air quality for a datetime
+// get the historical air quality for a dateTime
 client.getHistoricalAirQuaility(options function(err, data){
 	if (err){
 		console.log('derp! an error calling getHistoricalAirQuaility: ' + err);
@@ -137,7 +137,7 @@ client.getHistoricalAirQuaility(options function(err, data){
 | lat       | WGS84 standard latitude                                          | Number | Yes      |
 | lon       | WGS84 standard latitude                                          | Number | Yes      |
 | lang      | language used for the request                                    | String | No       |
-| datetime  | ISO8601 date and time you want historical air quality for        | Date   | No       |
+| dateTime  | ISO8601 date and time you want historical air quality for        | Date   | No       |
 | startDate | ISO8601 start date for a range of historical air quality results | Date   | No       |
 | endDate   | ISO8601 end date for a range of historical air quality results   | Date   | No       |
 | interval  | A time interval represents a period of time (hours)              | Number | No       |
