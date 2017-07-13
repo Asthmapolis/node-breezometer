@@ -62,7 +62,7 @@ var options = {
 	lon:-89.392808
 };
 
-// get the forecast by zip
+// get the air quality by geocode
 client.getAirQuality(options, function(err, data){
 	if (err){
 		console.log('derp! an error calling getAirQuality: ' + err);
@@ -81,9 +81,9 @@ client.getAirQuality(options, function(err, data){
 
 ## getHistoricalAirQuaility
 
-Gets air quality data for a location at a single datetime or a date range.
+Gets air quality data for a location at a single date and time or a date range.
 
-### example single point in time
+### example single date and time
 ```javascript
 const breezometer = require('node-breezometer');
 
@@ -99,7 +99,7 @@ var options = {
 // get the historical air quality for a datetime
 client.getHistoricalAirQuaility(options function(err, data){
 	if (err){
-		console.log();
+		console.log('derp! an error calling getHistoricalAirQuaility: ' + err);
 	} else {
 		// the world is good! start processing the air quality
 	}
@@ -124,7 +124,7 @@ var options = {
 // get the historical air quality for a date range
 client.getHistoricalAirQuaility(options function(err, data){
 	if (err){
-		console.log();
+		console.log('derp! an error calling getHistoricalAirQuaility: ' + err);
 	} else {
 		// the world is good! start processing the air quality reports
 	}
@@ -144,7 +144,7 @@ client.getHistoricalAirQuaility(options function(err, data){
 
 ## getForecast
 
-Gets future forecasts for a location.
+Gets future forecast(s) for a location.
 
 ### example hours
 ```javascript
@@ -162,7 +162,7 @@ var options = {
 // get an hourly forecast for a location for the next 8 hours
 client.getForecast(options function(err, data){
 	if (err){
-		console.log();
+		console.log('derp! an error calling getForecast: ' + err);
 	} else {
 		// the world is good! start processing the hourly air quality forecasts
 	}
@@ -186,7 +186,7 @@ var options = {
 // get an hourly forecast for the next 24 hours
 client.getForecast(options function(err, data){
 	if (err){
-		console.log();
+		console.log('derp! an error calling getForecast: ' + err);
 	} else {
 		// the world is good! start processing the hourly air quality forecasts
 	}
