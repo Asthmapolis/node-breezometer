@@ -66,6 +66,8 @@ var options = {
 client.getAirQuality(options, function(err, data){
 	if (err){
 		console.log('derp! an error calling getAirQuality: ' + err);
+	} else if (!data){
+		// location does not have data
 	} else {
 		// the world is good! start processing the air quality
 	}
@@ -100,6 +102,8 @@ var options = {
 client.getHistoricalAirQuaility(options function(err, data){
 	if (err){
 		console.log('derp! an error calling getHistoricalAirQuaility: ' + err);
+	} else if (!data){
+		// location does not have data
 	} else {
 		// the world is good! start processing the air quality
 	}
@@ -125,6 +129,8 @@ var options = {
 client.getHistoricalAirQuaility(options function(err, data){
 	if (err){
 		console.log('derp! an error calling getHistoricalAirQuaility: ' + err);
+	} else if (!data){
+		// location does not have data
 	} else {
 		// the world is good! start processing the air quality reports
 	}
@@ -163,6 +169,8 @@ var options = {
 client.getForecast(options function(err, data){
 	if (err){
 		console.log('derp! an error calling getForecast: ' + err);
+	} else if (!data){
+		// location does not have data
 	} else {
 		// the world is good! start processing the hourly air quality forecasts
 	}
@@ -187,6 +195,8 @@ var options = {
 client.getForecast(options function(err, data){
 	if (err){
 		console.log('derp! an error calling getForecast: ' + err);
+	} else if (!data){
+		// location does not have data
 	} else {
 		// the world is good! start processing the hourly air quality forecasts
 	}
