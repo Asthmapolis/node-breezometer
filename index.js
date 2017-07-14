@@ -102,12 +102,20 @@ module.exports = function breezometerClientConstructor(options){
                             json: true
                         }, function getAirQualityHTTPResponse(err, message, body){
                             if (!_.isUndefined(err) && !_.isNull(err)){
-                                logger.error(err, 'Error calling Breezometer getAirQuality');
+                                logger.error({err:err, qs:qs}, 'Error calling Breezometer getAirQuality');
                                 callback(err);
                             } else if (message.statusCode !== 200){
-                                logger.error({statusCode:message.statusCode, body: message.body},
+                                logger.error({statusCode:message.statusCode, body: message.body, qs:qs},
                                     'Did not receive a 200 status code from Breezometer getAirQuality');
                                 callback(new Error('Did not receive a HTTP 200 from Breezometer getAirQuality. Error:'+message.body));
+                            } else if (_.has(body, 'error') && (body.error.code === 20 || body.error.code === 21)){
+                                logger.info({error:body.error, qs:qs},
+                                    'Location not supported by Breezometer');
+                                callback();
+                            } else if (_.has(body, 'error')){
+                                logger.error({body:body, qs:qs},
+                                    'Application level error returned from breezometer');
+                                callback(new Error('Application error returned from Breezometer. Error: '+message.body));
                             } else {
                                 callback(err, body);
                             }
@@ -180,6 +188,14 @@ module.exports = function breezometerClientConstructor(options){
                                 logger.error({statusCode:message.statusCode, body: message.body},
                                     'Did not receive a 200 status code from Breezometer getHistoricalAirQuaility');
                                 callback(new Error('Did not receive a HTTP 200 from Breezometer getHistoricalAirQuaility. Error:'+message.body));
+                            } else if (_.has(body, 'error') && (body.error.code === 20 || body.error.code === 21)){
+                                logger.info({error:body.error, qs:qs},
+                                    'Location not supported by Breezometer');
+                                callback();
+                            } else if (_.has(body, 'error')){
+                                logger.error({body:body, qs:qs},
+                                    'Application level error returned from breezometer');
+                                callback(new Error('Application error returned from Breezometer. Error: '+message.body));
                             } else {
                                 callback(err, body);
                             }
@@ -248,6 +264,14 @@ module.exports = function breezometerClientConstructor(options){
                                 logger.error({statusCode:message.statusCode, body: message.body},
                                     'Did not receive a 200 status code from Breezometer getForecast');
                                 callback(new Error('Did not receive a HTTP 200 from Breezometer getForecast. Error:'+message.body));
+                            } else if (_.has(body, 'error') && (body.error.code === 20 || body.error.code === 21)){
+                                logger.info({error:body.error, qs:qs},
+                                    'Location not supported by Breezometer');
+                                callback();
+                            } else if (_.has(body, 'error')){
+                                logger.error({body:body, qs:qs},
+                                    'Application level error returned from breezometer');
+                                callback(new Error('Application error returned from Breezometer. Error: '+message.body));
                             } else {
                                 callback(err, body);
                             }
