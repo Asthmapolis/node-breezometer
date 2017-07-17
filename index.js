@@ -5,6 +5,7 @@ const async         = require('async');
 const request       = require('request');
 const _             = require('underscore');
 const Joi           = require('joi');
+const moment        = require('moment');
 const packageJson   = require('./package.json');
 
 // constants
@@ -70,28 +71,52 @@ module.exports = function breezometerClientConstructor(options){
 		* @param {Object} options object containing the send info
         * @param {Number} options.lat WGS84 standard latitude
         * @param {Number} options.lng WGS84 standard longitude
-        * @param {String} [options.lang=en] language used for the request 
+        * @param {String} [options.lang=en] language used for the request
+        * @param {String[]} [options.fields] filter the response to only have specific fields
         * @param {module:breezometer/client~getAirQualityCallback} [callback] callback
 		*/
         getAirQuality: function getAirQuality(options, callback){
             if (_.isUndefined(callback) || _.isNull(callback)) callback = _.noop;
 
             // input validation
-            let schema = Joi.object().keys({
+            let requestSchema = Joi.object().keys({
                 lat: Joi.number().min(-90).max(90).required(),
                 lon: Joi.number().min(-180).max(180).required(),
                 lang: Joi.string().empty('').empty(null).valid(['en','he']).optional(),
+                fields: Joi.array().single().unique().min(1).max(15).items(
+                    Joi.string().valid([
+                        'breezometer_aqi',
+                        'breezometer_description',
+                        'country_aqi_prefix',
+                        'country_color',
+                        'breezometer_color',
+                        'country_name',
+                        'country_aqi',
+                        'country_description',
+                        'dominant_pollutant_canonical_name',
+                        'dominant_pollutant_description',
+                        'dominant_pollutant_text',
+                        'datetime',
+                        'pollutants',
+                        'data_valid',
+                        'random_recommendations']))
+                .optional(),
                 key: Joi.string().default(apiKey).forbidden()
             }).required();
 
-            Joi.validate(options, schema, function validateResults(err, qs){
+            Joi.validate(options, requestSchema, function validateResults(err, qs){
                 if (!_.isUndefined(err) && !_.isNull(err)){
                     callback(err);
                 } else {
+
+                    // project fields to a comma seperated query string param
+                    if (_.has(qs, 'fields')){
+                        qs.fields = qs.fields.join();
+                    }
                     
                     // send with exponential backoff
                     async.retry({ 
-                        times: retryTimes, 
+                        times: retryTimes,
                         interval: function getRetryInterval(retryCount){
                             return Math.min(50 * Math.pow(2, retryCount), MAX_RETRY_INTERVAL);
                         }
@@ -117,6 +142,11 @@ module.exports = function breezometerClientConstructor(options){
                                     'Application level error returned from breezometer');
                                 callback(new Error('Application error returned from Breezometer. Error: '+message.body));
                             } else {
+                                // cast the datetime field to a date
+                                if (_.has(body, 'datetime')){
+                                    body.dateime = moment.utc(body.datetime, moment.ISO_8601);
+                                }
+
                                 callback(err, body);
                             }
                         });
@@ -136,6 +166,7 @@ module.exports = function breezometerClientConstructor(options){
         * @param {Number} options.lat WGS84 standard latitude
         * @param {Number} options.lng WGS84 standard longitude
         * @param {String} [options.lang=en] language used for the request 
+        * @param {String[]} [options.fields] filter the response to only have specific fields
         * @param {Date} [options.dateTime] ISO8601 date and time you want historical air quality for
         * @param {Date} [options.startDate] ISO8601 start date for a range of historical air quality results
         * @param {Date} [options.endDate] ISO8601 end date for a range of historical air quality results
@@ -150,6 +181,24 @@ module.exports = function breezometerClientConstructor(options){
                 lat: Joi.number().min(-90).max(90).required(),
                 lon: Joi.number().min(-180).max(180).required(),
                 lang: Joi.string().empty('').empty(null).valid(['en','he']).optional(),
+                fields: Joi.array().single().unique().min(1).max(15).items(
+                    Joi.string().valid([
+                        'breezometer_aqi',
+                        'breezometer_description',
+                        'country_aqi_prefix',
+                        'country_color',
+                        'breezometer_color',
+                        'country_name',
+                        'country_aqi',
+                        'country_description',
+                        'dominant_pollutant_canonical_name',
+                        'dominant_pollutant_description',
+                        'dominant_pollutant_text',
+                        'datetime',
+                        'pollutants',
+                        'data_valid',
+                        'random_recommendations'])
+                ).optional(),
                 key: Joi.string().default(apiKey).forbidden(),
                 datetime: Joi.date().max(new Date(Date.now() - NOW_BUFFER)).optional(),
                 start_datetime: Joi.date().max(Joi.ref('end_datetime')).optional(),
@@ -169,6 +218,24 @@ module.exports = function breezometerClientConstructor(options){
                 if (!_.isUndefined(err) && !_.isNull(err)){
                     callback(err);
                 } else {
+                    
+                    // project fields to a comma seperated query string param
+                    if (_.has(qs, 'fields')){
+                        qs.fields = qs.fields.join();
+                    }
+
+                    // time based queries are closest older air quality report. 
+                    // so some awkwarness on precision here; help out by rounding seconds
+                    if (_.has(qs, 'datetime')){
+                        qs.datetime = moment.utc(qs.datetime).endOf('second');
+                    }
+                    if (_.has(qs, 'start_datetime')){
+                        qs.start_datetime = moment.utc(qs.start_datetime).startOf('second');
+                    }
+                    if (_.has(qs, 'end_datetime')){
+                        qs.end_datetime = moment.utc(qs.end_datetime).endOf('second');
+                    }
+
                     // send with exponential backoff
                     async.retry({ 
                         times: retryTimes, 
@@ -197,6 +264,11 @@ module.exports = function breezometerClientConstructor(options){
                                     'Application level error returned from breezometer');
                                 callback(new Error('Application error returned from Breezometer. Error: '+message.body));
                             } else {
+                                // cast the datetime field to a date
+                                if (_.has(body, 'datetime')){
+                                    body.dateime = moment.utc(body.datetime, moment.ISO_8601);
+                                }
+
                                 callback(err, body);
                             }
                         });
@@ -216,6 +288,7 @@ module.exports = function breezometerClientConstructor(options){
         * @param {Number} options.lat WGS84 standard latitude
         * @param {Number} options.lng WGS84 standard longitude
         * @param {String} [options.lang=en] language used for the request 
+        * @param {String[]} [options.fields] filter the response to only have specific fields
         * @param {Number} [options.hours=24{1,24}] Number of hourly forecasts to receive from now
         * @param {Date} [options.startDate] A specific start date range to get predictions for.  Can not be used with hours
         * @param {Date} [options.endDate] A specific end date range to get predictions for.  Can not be used with hours 
@@ -229,6 +302,24 @@ module.exports = function breezometerClientConstructor(options){
                 lat: Joi.number().min(-90).max(90).required(),
                 lon: Joi.number().min(-180).max(180).required(),
                 lang: Joi.string().empty('').empty(null).valid(['en','he']).optional(),
+                fields: Joi.array().single().unique().min(1).max(15).items(
+                    Joi.string().valid([
+                        'breezometer_aqi',
+                        'breezometer_description',
+                        'country_aqi_prefix',
+                        'country_color',
+                        'breezometer_color',
+                        'country_name',
+                        'country_aqi',
+                        'country_description',
+                        'dominant_pollutant_canonical_name',
+                        'dominant_pollutant_description',
+                        'dominant_pollutant_text',
+                        'datetime',
+                        'pollutants',
+                        'data_valid',
+                        'random_recommendations'])
+                ).optional(),
                 key: Joi.string().default(apiKey).forbidden(),
                 hours: Joi.number().integer().min(1).max(24).optional(),
                 start_datetime: Joi.date().min(new Date(Date.now() - NOW_BUFFER)).optional(),
@@ -245,6 +336,21 @@ module.exports = function breezometerClientConstructor(options){
                 if (!_.isUndefined(err) && !_.isNull(err)){
                     callback(err);
                 } else {
+
+                    // project fields to a comma seperated query string param
+                    if (_.has(qs, 'fields')){
+                        qs.fields = qs.fields.join();
+                    }
+
+                    // time based queries are closest older air quality report. 
+                    // so some awkwarness on precision here; help out by rounding seconds
+                    if (_.has(qs, 'start_datetime')){
+                        qs.start_datetime = moment.utc(qs.start_datetime).startOf('second');
+                    }
+                    if (_.has(qs, 'end_datetime')){
+                        qs.end_datetime = moment.utc(qs.end_datetime).endOf('second');
+                    }
+
                     // send with exponential backoff
                     async.retry({ 
                         times: retryTimes, 
@@ -273,6 +379,11 @@ module.exports = function breezometerClientConstructor(options){
                                     'Application level error returned from breezometer');
                                 callback(new Error('Application error returned from Breezometer. Error: '+message.body));
                             } else {
+                                // cast the datetime field to a date
+                                if (_.has(body, 'datetime')){
+                                    body.dateime = moment.utc(body.datetime, moment.ISO_8601);
+                                }
+                                
                                 callback(err, body);
                             }
                         });

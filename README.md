@@ -59,7 +59,9 @@ const client = breezometer({ apiKey: 'my breezometer API key' });
 // build my options
 var options = {
 	lat: 43.067475,
-	lon:-89.392808
+	lon:-89.392808,
+	lang: 'en',
+	fields:['breezometer_aqi', 'country_aqi','pollutants']
 };
 
 // get the air quality by geocode
@@ -75,11 +77,12 @@ client.getAirQuality(options, function(err, data){
 ```
 
 ### options
-| Parameter | Description                   | Type   | Required |
-|-----------|-------------------------------|--------|----------|
-| lat       | WGS84 standard latitude       | Number | Yes      |
-| lon       | WGS84 standard latitude       | Number | Yes      |
-| lang      | language used for the request | String | No       |
+| Parameter | Description                   | Type   	| Required |
+|-----------|-------------------------------|-----------|----------|
+| lat       | WGS84 standard latitude       | Number	| Yes      |
+| lon       | WGS84 standard latitude       | Number	| Yes      |
+| lang      | language used for the request | String	| No       |
+| fields    | Filter the response fields 	| String[]	| No       |
 
 ## getHistoricalAirQuaility
 
@@ -120,6 +123,8 @@ const client = breezometer({ apiKey: 'my breezometer API key' });
 var options = {
 	lat: 43.067475,
 	lon:-89.392808,
+	lang: 'en',
+	fields:['breezometer_aqi', 'country_aqi','pollutants'],
 	startDate: new Date(Date.now() - 1728000000),
 	endDate: new Date(Date.now() - 864000000),
 	interval: 1
@@ -138,15 +143,16 @@ client.getHistoricalAirQuaility(options function(err, data){
 ```
 
 ### options
-| Parameter | Description                                                      | Type   | Required |
-|-----------|------------------------------------------------------------------|--------|----------|
-| lat       | WGS84 standard latitude                                          | Number | Yes      |
-| lon       | WGS84 standard latitude                                          | Number | Yes      |
-| lang      | language used for the request                                    | String | No       |
-| dateTime  | ISO8601 date and time you want historical air quality for        | Date   | No       |
-| startDate | ISO8601 start date for a range of historical air quality results | Date   | No       |
-| endDate   | ISO8601 end date for a range of historical air quality results   | Date   | No       |
-| interval  | A time interval represents a period of time (hours)              | Number | No       |
+| Parameter | Description                                                      | Type   	| Required |
+|-----------|------------------------------------------------------------------|------------|----------|
+| lat       | WGS84 standard latitude                                          | Number 	| Yes      |
+| lon       | WGS84 standard latitude                                          | Number 	| Yes      |
+| lang      | language used for the request                                    | String   	| No       |
+| fields    | Filter the response fields 									   | String[]	| No       |
+| dateTime  | ISO8601 date and time you want historical air quality for        | Date   	| No       |
+| startDate | ISO8601 start date for a range of historical air quality results | Date   	| No       |
+| endDate   | ISO8601 end date for a range of historical air quality results   | Date   	| No       |
+| interval  | A time interval represents a period of time (hours)              | Number 	| No       |
 
 ## getForecast
 
@@ -162,6 +168,8 @@ const client = breezometer({ apiKey: 'my breezometer API key' });
 var options = {
 	lat: 43.067475,
 	lon:-89.392808,
+	lang: 'en',
+	fields:['breezometer_aqi', 'country_aqi','pollutants'],
 	hours: 8
 };
 
@@ -204,14 +212,15 @@ client.getForecast(options function(err, data){
 ```
 
 ### options
-| Parameter | Description                                                                    | Type   | Required |
-|-----------|--------------------------------------------------------------------------------|--------|----------|
-| lat       | WGS84 standard latitude                                                        | Number | Yes      |
-| lon       | WGS84 standard latitude                                                        | Number | Yes      |
-| lang      | language used for the request                                                  | String | No       |
-| startDate | A specific start date range to get predictions for.,Can not be used with hours | Date   | No       |
-| endDate   | IA specific end date range to get predictions for.,Can not be used with hours  | Date   | No       |
-| hours     | Number of hourly forecasts to receive from now                                 | Number | No       |
+| Parameter | Description                                                                    | Type   	| Required |
+|-----------|--------------------------------------------------------------------------------|----------|----------|
+| lat       | WGS84 standard latitude                                                        | Number 	| Yes      |
+| lon       | WGS84 standard latitude                                                        | Number 	| Yes      |
+| lang      | language used for the request                                                  | String 	| No       |
+| fields    | Filter the response fields 									   				 | String[]	| No       |
+| startDate | A specific start date range to get predictions for.,Can not be used with hours | Date   	| No       |
+| endDate   | IA specific end date range to get predictions for.,Can not be used with hours  | Date   	| No       |
+| hours     | Number of hourly forecasts to receive from now                                 | Number 	| No       |
 
 ## Contributing
 
