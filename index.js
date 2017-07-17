@@ -227,13 +227,16 @@ module.exports = function breezometerClientConstructor(options){
                     // time based queries are closest older air quality report. 
                     // so some awkwarness on precision here; help out by rounding seconds
                     if (_.has(qs, 'datetime')){
-                        qs.datetime = moment.utc(qs.datetime).endOf('second');
+                        qs.datetime = moment.utc(qs.datetime)
+                            .endOf('second').toDate();
                     }
                     if (_.has(qs, 'start_datetime')){
-                        qs.start_datetime = moment.utc(qs.start_datetime).startOf('second');
+                        qs.start_datetime = moment.utc(qs.start_datetime)
+                            .startOf('second').toDate();
                     }
                     if (_.has(qs, 'end_datetime')){
-                        qs.end_datetime = moment.utc(qs.end_datetime).endOf('second');
+                        qs.end_datetime = moment.utc(qs.end_datetime)
+                            .endOf('second').toDate();
                     }
 
                     // send with exponential backoff
@@ -345,10 +348,12 @@ module.exports = function breezometerClientConstructor(options){
                     // time based queries are closest older air quality report. 
                     // so some awkwarness on precision here; help out by rounding seconds
                     if (_.has(qs, 'start_datetime')){
-                        qs.start_datetime = moment.utc(qs.start_datetime).startOf('second');
+                        qs.start_datetime = moment.utc(qs.start_datetime)
+                            .startOf('second').toDate();
                     }
                     if (_.has(qs, 'end_datetime')){
-                        qs.end_datetime = moment.utc(qs.end_datetime).endOf('second');
+                        qs.end_datetime = moment.utc(qs.end_datetime)
+                            .endOf('second').toDate();
                     }
 
                     // send with exponential backoff
@@ -383,7 +388,7 @@ module.exports = function breezometerClientConstructor(options){
                                 if (_.has(body, 'datetime')){
                                     body.dateime = moment.utc(body.datetime, moment.ISO_8601);
                                 }
-                                
+
                                 callback(err, body);
                             }
                         });
