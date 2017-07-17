@@ -3,6 +3,7 @@ const should    = require('should');
 const sinon     = require('sinon');
 const r         = require('random-js')();
 const _         = require('underscore');
+const moment    = require('moment');
 
 describe('getHistoricalAirQuaility', ()=>{
     let sandbox = undefined;
@@ -233,7 +234,7 @@ describe('getHistoricalAirQuaility', ()=>{
             });
         });
         it('matches', (done)=>{
-            let dateTime = new Date(Date.now() - r.integer(60000, 864000000));
+            let dateTime = moment.utc().subtract(r.integer(60000, 864000000), 'millisecond').endOf('second').toDate();
             client.getHistoricalAirQuaility({
                 lat:43.067475,
                 lon: -89.392808,
@@ -291,7 +292,7 @@ describe('getHistoricalAirQuaility', ()=>{
             });
         });
         it('matches', (done)=>{
-            let startDate = new Date(Date.now() - r.integer(60000, 864000000));
+            let startDate = moment.utc().subtract(r.integer(60000, 864000000), 'millisecond').startOf('second').toDate();
             client.getHistoricalAirQuaility({
                 lat:43.067475,
                 lon: -89.392808,
@@ -350,7 +351,7 @@ describe('getHistoricalAirQuaility', ()=>{
             });
         });
         it('matches', (done)=>{
-            let endDate = new Date(Date.now() - r.integer(60000, 864000000));
+            let endDate = moment.utc().subtract(r.integer(60000, 864000000), 'millisecond').endOf('second').toDate();
             client.getHistoricalAirQuaility({
                 lat:43.067475,
                 lon: -89.392808,

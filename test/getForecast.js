@@ -3,6 +3,7 @@ const should    = require('should');
 const sinon     = require('sinon');
 const r         = require('random-js')();
 const _         = require('underscore');
+const moment    = require('moment');
 
 describe('getForecast', ()=>{
     let sandbox = undefined;
@@ -301,7 +302,7 @@ describe('getForecast', ()=>{
             });
         });
         it('matches', (done)=>{
-            let startDate = new Date(Date.now() + r.integer(60000, 864000000));
+            let startDate = moment.utc().add(r.integer(60000, 864000000), 'milliseconds').startOf('second').toDate();
             client.getForecast({
                 lat:43.067475,
                 lon: -89.392808,
@@ -360,7 +361,7 @@ describe('getForecast', ()=>{
             });
         });
         it('matches', (done)=>{
-            let endDate = new Date(Date.now() + r.integer(60000, 864000000));
+            let endDate = moment.utc().add(r.integer(60000, 864000000), 'milliseconds').endOf('second').toDate();
             client.getForecast({
                 lat:43.067475,
                 lon: -89.392808,
