@@ -144,7 +144,7 @@ module.exports = function breezometerClientConstructor(options){
                             } else {
                                 // cast the datetime field to a date
                                 if (_.has(body, 'datetime')){
-                                    body.dateime = moment.utc(body.datetime, moment.ISO_8601).toDate();
+                                    body.datetime = moment.utc(body.datetime, moment.ISO_8601).toDate();
                                 }
 
                                 callback(err, body);
@@ -269,7 +269,7 @@ module.exports = function breezometerClientConstructor(options){
                             } else {
                                 // cast the datetime field to a date
                                 if (_.has(body, 'datetime')){
-                                    body.dateime = moment.utc(body.datetime, moment.ISO_8601).toDate();
+                                    body.datetime = moment.utc(body.datetime, moment.ISO_8601).toDate();
                                 }
 
                                 callback(err, body);
@@ -386,7 +386,7 @@ module.exports = function breezometerClientConstructor(options){
                             } else {
                                 // cast the datetime field to a date
                                 if (_.has(body, 'datetime')){
-                                    body.dateime = moment.utc(body.datetime, moment.ISO_8601).toDate();
+                                    body.datetime = moment.utc(body.datetime, moment.ISO_8601).toDate();
                                 }
 
                                 callback(err, body);
