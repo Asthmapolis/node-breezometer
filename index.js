@@ -11,6 +11,7 @@ const packageJson   = require('./package.json');
 // constants
 const MAX_RETRY_INTERVAL = 60000;
 const NOW_BUFFER = 1000;
+const DATETIME_FORMAT = "YYYY-MM-DDTHH:mm:ss";
 
 /**
 * breezometerClientConstructor
@@ -228,15 +229,15 @@ module.exports = function breezometerClientConstructor(options){
                     // so some awkwarness on precision here; help out by rounding seconds
                     if (_.has(qs, 'datetime')){
                         qs.datetime = moment.utc(qs.datetime)
-                            .endOf('second').toDate();
+                            .endOf('minute').format(DATETIME_FORMAT);
                     }
                     if (_.has(qs, 'start_datetime')){
                         qs.start_datetime = moment.utc(qs.start_datetime)
-                            .startOf('second').toDate();
+                            .startOf('minute').format(DATETIME_FORMAT);
                     }
                     if (_.has(qs, 'end_datetime')){
                         qs.end_datetime = moment.utc(qs.end_datetime)
-                            .endOf('second').toDate();
+                            .endOf('minute').format(DATETIME_FORMAT);
                     }
 
                     // send with exponential backoff
@@ -349,11 +350,11 @@ module.exports = function breezometerClientConstructor(options){
                     // so some awkwarness on precision here; help out by rounding seconds
                     if (_.has(qs, 'start_datetime')){
                         qs.start_datetime = moment.utc(qs.start_datetime)
-                            .startOf('second').toDate();
+                            .startOf('minute').format(DATETIME_FORMAT);
                     }
                     if (_.has(qs, 'end_datetime')){
                         qs.end_datetime = moment.utc(qs.end_datetime)
-                            .endOf('second').toDate();
+                            .endOf('minute').format(DATETIME_FORMAT);
                     }
 
                     // send with exponential backoff
