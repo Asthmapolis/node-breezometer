@@ -11,7 +11,7 @@ npm install node-breezometer --save
 ```javascript
 const breezometer = require('node-breezometer');
 
-const client = airnow({ apiKey: 'my breezometer API key' });
+const client = breezometer({ apiKey: 'my breezometer API key' });
 
 // get the current AQI by geocode
 client.getAirQuality({ lat: 43.067475, lon:-89.392808 }, function(err, data){
@@ -225,3 +225,6 @@ client.getForecast(options function(err, data){
 ## Contributing
 
 The more PRs the merrier. :-)
+
+## Breezometer Association
+node-breezometer npm package is not supported by Breezometer.
