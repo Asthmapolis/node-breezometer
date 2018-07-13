@@ -14,29 +14,54 @@ const breezometer = require('node-breezometer');
 const client = breezometer({ apiKey: 'my breezometer API key' });
 
 // get the current AQI by geocode
+
+// w/callback
 client.getAirQuality({ lat: 43.067475, lon:-89.392808 }, function(err, data){
 	
 });
 
+// w/async await
+data = await client.getAirQuality({ lat: 43.067475, lon:-89.392808 });
+
 // get the historical air quality for a dateTime
+
+// w/callback
 client.getHistoricalAirQuaility({ lat: 43.067475, lon:-89.392808, dateTime: new Date(Date.now() - 864000000) }, function(err, data){
 	
 });
 
+// w/async await
+data = await client.getHistoricalAirQuaility({ lat: 43.067475, lon:-89.392808, dateTime: new Date(Date.now() - 864000000) });
+
 // get the historical air quality for a timespan
+
+// w/callback
 client.getHistoricalAirQuaility({ lat: 43.067475, lon:-89.392808, startDate: new Date(Date.now() - 1728000000), endDate: new Date(Date.now() - 864000000), interval:1 }, function(err, data){
 	
 });
 
+// w/async await
+data = await client.getHistoricalAirQuaility({ lat: 43.067475, lon:-89.392808, startDate: new Date(Date.now() - 1728000000), endDate: new Date(Date.now() - 864000000), interval:1 });
+
 // get a forecast for the next 8 hours
+
+// w/callback
 client.getForecast({ lat: 43.067475, lon:-89.392808, hours:8 }, function(err, data){
 	
 });
 
+// w/async await
+data = await client.getForecast({ lat: 43.067475, lon:-89.392808, hours:8 });
+
 // get a forecast for a date range
+
+// w/callback
 client.getForecast({ lat: 43.067475, lon:-89.392808, startDate: new Date(), endDate: new Date(Date.now() + 864000000) }, function(err, data){
 	
 });
+
+// w/async await
+data = await client.getForecast({ lat: 43.067475, lon:-89.392808, startDate: new Date(), endDate: new Date(Date.now() + 864000000) });
 ```
 
 ## Features
@@ -102,7 +127,7 @@ var options = {
 };
 
 // get the historical air quality for a dateTime
-client.getHistoricalAirQuaility(options function(err, data){
+client.getHistoricalAirQuaility(options, function(err, data){
 	if (err){
 		console.log('derp! an error calling getHistoricalAirQuaility: ' + err);
 	} else if (!data){
