@@ -76,8 +76,8 @@ module.exports = function breezometerClientConstructor(options){
         * @param {String[]} [options.fields] filter the response to only have specific fields
         * @param {module:breezometer/client~getAirQualityCallback} [callback] callback
 		*/
-        getAirQuality: function getAirQuality(options, callback){
-            if (_.isUndefined(callback) || _.isNull(callback)) callback = _.noop;
+        getAirQuality: async function getAirQuality(options, callback){
+            let asyncFx = _.isUndefined(callback) || _.isNull(callback);
 
             // input validation
             let requestSchema = Joi.object().keys({
@@ -107,7 +107,11 @@ module.exports = function breezometerClientConstructor(options){
 
             Joi.validate(options, requestSchema, function validateResults(err, qs){
                 if (!_.isUndefined(err) && !_.isNull(err)){
-                    callback(err);
+                    if (asyncFx){
+                        throw new Error(err);
+                    } else {
+                        callback(err);
+                    }
                 } else {
 
                     // project fields to a comma seperated query string param
@@ -121,7 +125,7 @@ module.exports = function breezometerClientConstructor(options){
                         interval: function getRetryInterval(retryCount){
                             return Math.min(50 * Math.pow(2, retryCount), MAX_RETRY_INTERVAL);
                         }
-                    }, function(callback){
+                    }, function(retryCallback){
                         baseRequest({
                             uri: "baqi/?",
                             qs: qs,
@@ -129,29 +133,39 @@ module.exports = function breezometerClientConstructor(options){
                         }, function getAirQualityHTTPResponse(err, message, body){
                             if (!_.isUndefined(err) && !_.isNull(err)){
                                 logger.error({err:err, qs:qs}, 'Error calling Breezometer getAirQuality');
-                                callback(err);
+                                retryCallback(err);
                             } else if (message.statusCode !== 200){
                                 logger.error({statusCode:message.statusCode, body: message.body, qs:qs},
                                     'Did not receive a 200 status code from Breezometer getAirQuality');
-                                callback(new Error('Did not receive a HTTP 200 from Breezometer getAirQuality. Error:'+message.body));
+                                retryCallback(new Error('Did not receive a HTTP 200 from Breezometer getAirQuality. Error:'+message.body));
                             } else if (_.has(body, 'error') && (body.error.code === 20 || body.error.code === 21)){
                                 logger.info({error:body.error, qs:qs},
                                     'Location not supported by Breezometer');
-                                callback();
+                                retryCallback();
                             } else if (_.has(body, 'error')){
                                 logger.error({body:body, qs:qs},
                                     'Application level error returned from breezometer');
-                                callback(new Error('Application error returned from Breezometer. Error: '+message.body));
+                                retryCallback(new Error('Application error returned from Breezometer. Error: '+message.body));
                             } else {
                                 // cast the datetime field to a date
                                 if (_.has(body, 'datetime')){
                                     body.datetime = moment.utc(body.datetime, moment.ISO_8601).toDate();
                                 }
 
-                                callback(err, body);
+                                retryCallback(err, body);
                             }
                         });
-                    }, callback);
+                    }, (err, body)=>{
+                        if (asyncFx){
+                            if (!_.isNull(err) && !_.isUndefined(err)){
+                                throw new Error(err);
+                            } else {
+                                return body;
+                            }
+                        } else {
+                            callback(err, body);
+                        }
+                    });
                 }
             });
         },
@@ -174,8 +188,8 @@ module.exports = function breezometerClientConstructor(options){
         * @param {Number} [options.interval] A time interval represents a period of time (hours) between two BAQI objects. You can choose an interval value (Integer) between 1-24 hours
         * @param {module:breezometer/client~getHistoricalAirQuailityCallback} [callback] callback
 		*/
-        getHistoricalAirQuaility: function getHistoricalAirQuaility(options, callback){
-            if (_.isUndefined(callback) || _.isNull(callback)) callback = _.noop;
+        getHistoricalAirQuaility: async function getHistoricalAirQuaility(options, callback){
+            let asyncFx = _.isUndefined(callback) || _.isNull(callback);
 
             // input validation
             let schema = Joi.object().keys({
@@ -217,7 +231,11 @@ module.exports = function breezometerClientConstructor(options){
 
             Joi.validate(options, schema, function validateResults(err, qs){
                 if (!_.isUndefined(err) && !_.isNull(err)){
-                    callback(err);
+                    if (asyncFx){
+                        throw new Error(err);
+                    } else {
+                        callback(err);
+                    }
                 } else {
                     
                     // project fields to a comma seperated query string param
@@ -246,7 +264,7 @@ module.exports = function breezometerClientConstructor(options){
                         interval: function getRetryInterval(retryCount){
                             return Math.min(50 * Math.pow(2, retryCount), MAX_RETRY_INTERVAL);
                         }
-                    }, function(callback){
+                    }, function(retryCallback){
                         baseRequest({
                             uri: "baqi/?",
                             qs: qs,
@@ -254,29 +272,39 @@ module.exports = function breezometerClientConstructor(options){
                         }, function getHistoricalAirQuailityHTTPResponse(err, message, body){
                             if (!_.isUndefined(err) && !_.isNull(err)){
                                 logger.error(err, 'Error calling Breezometer getHistoricalAirQuaility');
-                                callback(err);
+                                retryCallback(err);
                             } else if (message.statusCode !== 200){
                                 logger.error({statusCode:message.statusCode, body: message.body},
                                     'Did not receive a 200 status code from Breezometer getHistoricalAirQuaility');
-                                callback(new Error('Did not receive a HTTP 200 from Breezometer getHistoricalAirQuaility. Error:'+message.body));
+                                retryCallback(new Error('Did not receive a HTTP 200 from Breezometer getHistoricalAirQuaility. Error:'+message.body));
                             } else if (_.has(body, 'error') && (body.error.code === 20 || body.error.code === 21)){
                                 logger.info({error:body.error, qs:qs},
                                     'Location not supported by Breezometer');
-                                callback();
+                                retryCallback();
                             } else if (_.has(body, 'error')){
                                 logger.error({body:body, qs:qs},
                                     'Application level error returned from breezometer');
-                                callback(new Error('Application error returned from Breezometer. Error: '+message.body));
+                                retryCallback(new Error('Application error returned from Breezometer. Error: '+message.body));
                             } else {
                                 // cast the datetime field to a date
                                 if (_.has(body, 'datetime')){
                                     body.datetime = moment.utc(body.datetime, moment.ISO_8601).toDate();
                                 }
 
-                                callback(err, body);
+                                retryCallback(err, body);
                             }
                         });
-                    }, callback);                    
+                    }, (err, body)=>{
+                        if (asyncFx){
+                            if (!_.isNull(err) && !_.isUndefined(err)){
+                                throw new Error(err);
+                            } else {
+                                return body;
+                            }
+                        } else {
+                            callback(err, body);
+                        }
+                    });                    
                 }
             });
         },
@@ -298,8 +326,8 @@ module.exports = function breezometerClientConstructor(options){
         * @param {Date} [options.endDate] A specific end date range to get predictions for.  Can not be used with hours 
         * @param {module:breezometer/client~getForecastCallback} [callback] callback
 		*/
-        getForecast: function getForecast(options, callback){
-            if (_.isUndefined(callback) || _.isNull(callback)) callback = _.noop;
+        getForecast: async function getForecast(options, callback){
+            let asyncFx = _.isUndefined(callback) || _.isNull(callback);
 
             // input validation
             let schema = Joi.object().keys({
@@ -338,7 +366,11 @@ module.exports = function breezometerClientConstructor(options){
 
             Joi.validate(options, schema, function validateResults(err, qs){
                 if (!_.isUndefined(err) && !_.isNull(err)){
-                    callback(err);
+                    if (asyncFx){
+                        throw new Error(err);
+                    } else {
+                        callback(err);
+                    }
                 } else {
 
                     // project fields to a comma seperated query string param
@@ -363,7 +395,7 @@ module.exports = function breezometerClientConstructor(options){
                         interval: function getRetryInterval(retryCount){
                             return Math.min(50 * Math.pow(2, retryCount), MAX_RETRY_INTERVAL);
                         }
-                    }, function(callback){
+                    }, function(retryCallback){
                         baseRequest({
                             uri: "forecast/?",
                             qs: qs,
@@ -371,29 +403,39 @@ module.exports = function breezometerClientConstructor(options){
                         }, function getForecastHTTPResponse(err, message, body){
                             if (!_.isUndefined(err) && !_.isNull(err)){
                                 logger.error(err, 'Error calling Breezometer getForecast');
-                                callback(err);
+                                retryCallback(err);
                             } else if (message.statusCode !== 200){
                                 logger.error({statusCode:message.statusCode, body: message.body},
                                     'Did not receive a 200 status code from Breezometer getForecast');
-                                callback(new Error('Did not receive a HTTP 200 from Breezometer getForecast. Error:'+message.body));
+                                retryCallback(new Error('Did not receive a HTTP 200 from Breezometer getForecast. Error:'+message.body));
                             } else if (_.has(body, 'error') && (body.error.code === 20 || body.error.code === 21)){
                                 logger.info({error:body.error, qs:qs},
                                     'Location not supported by Breezometer');
-                                callback();
+                                retryCallback();
                             } else if (_.has(body, 'error')){
                                 logger.error({body:body, qs:qs},
                                     'Application level error returned from breezometer');
-                                callback(new Error('Application error returned from Breezometer. Error: '+message.body));
+                                retryCallback(new Error('Application error returned from Breezometer. Error: '+message.body));
                             } else {
                                 // cast the datetime field to a date
                                 if (_.has(body, 'datetime')){
                                     body.datetime = moment.utc(body.datetime, moment.ISO_8601).toDate();
                                 }
 
-                                callback(err, body);
+                                retryCallback(err, body);
                             }
                         });
-                    }, callback);
+                    }, (err, body)=>{
+                        if (asyncFx){
+                            if (!_.isNull(err) && !_.isUndefined(err)){
+                                throw new Error(err);
+                            } else {
+                                return body;
+                            }
+                        } else {
+                            callback(err, body);
+                        }
+                    });
                 }
             });
         }
