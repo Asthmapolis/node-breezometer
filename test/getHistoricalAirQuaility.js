@@ -12,11 +12,11 @@ describe('getHistoricalAirQuaility', ()=>{
     let sendStub = undefined;
     beforeEach((done)=>{
         sandbox = sinon.createSandbox();
-        let request = require('request');
-        sendStub = sandbox.stub().yields(null, {statusCode:200}, {});
+        let request = require('request-promise-native');
+        sendStub = sandbox.stub().resolves({statusCode:200, body:{}});
         defaultsStub = sandbox.stub(request, 'defaults').returns(sendStub);
         let breezometer   = require('../index.js');
-        client = breezometer({ apiKey:'foo' });
+        client = breezometer({ apiKey:'foobar' });
         done();
     });
     afterEach((done)=>{
@@ -125,7 +125,8 @@ describe('getHistoricalAirQuaility', ()=>{
                 done();
             });
         });
-        it('string number', (done)=>{
+        it('string number', function(done){
+            this.timeout(60000);
             client.getHistoricalAirQuaility({
                 lat:'43.067475',
                 lon: -89.392808,
@@ -922,7 +923,7 @@ describe('getHistoricalAirQuaility', ()=>{
             }
             threw.should.equal(true);
         });
-        it('matches', async ()=>{
+        it('matches', async function(){
             let lang = _.sample(['en','he']);
             await client.getHistoricalAirQuaility({lat:43.067475, lon: -89.392808, lang:lang, dateTime: new Date(Date.now() - 864000000)});
             sendStub.calledWith(sinon.match({ qs:{ lang: lang }  })).should.equal(true);
