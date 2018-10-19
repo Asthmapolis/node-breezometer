@@ -146,13 +146,15 @@ module.exports = function breezometerClientConstructor(options){
                                 'Did not receive a 200 status code from Breezometer getAirQuality');
                             throw new Error('Did not receive a 200 status code from Breezometer getAirQuality');
                         } else if (_.has(message.body, 'error')){
-                            logger.error({body:message.body, qs:qs},
-                                'Application level error returned from breezometer');
-                            throw new Error('Application error returned from Breezometer. Error: '+message.body);
-                        } else if (_.has(message.body, 'error') && (message.body.error.code === 20 || message.body.error.code === 21)){
-                            logger.info({error:message.body.error, qs:qs},
-                                'Location not supported by Breezometer');
-                            break;
+                            if (message.body.error.code === 20 || message.body.error.code === 21) {
+                                logger.info({error:message.body.error, qs:qs},
+                                    'Location not supported by Breezometer');
+                                break;
+                            } else {
+                                logger.error({body:message.body, qs:qs},
+                                    'Application level error returned from breezometer');
+                                throw new Error('Application error returned from Breezometer. Error: '+message.body);
+                            }
                         } else {
                             // cast the datetime field to a date
                             if (_.has(message.body, 'datetime')){
@@ -295,13 +297,15 @@ module.exports = function breezometerClientConstructor(options){
                                 'Did not receive a 200 status code from Breezometer getHistoricalAirQuaility');
                             throw new Error('Did not receive a 200 status code from Breezometer getHistoricalAirQuaility');
                         } else if (_.has(message.body, 'error')){
-                            logger.error({body:message.body, qs:qs},
-                                'Application level error returned from breezometer');
-                            throw new Error('Application error returned from Breezometer. Error: '+message.body);
-                        } else if (_.has(message.body, 'error') && (message.body.error.code === 20 || message.body.error.code === 21)){
-                            logger.info({error:message.body.error, qs:qs},
-                                'Location not supported by Breezometer');
-                            break;
+                            if (message.body.error.code === 20 || message.body.error.code === 21) {
+                                logger.info({error:message.body.error, qs:qs},
+                                    'Location not supported by Breezometer');
+                                break;
+                            } else {
+                                logger.error({body:message.body, qs:qs},
+                                    'Application level error returned from breezometer');
+                                throw new Error('Application error returned from Breezometer. Error: '+message.body);
+                            }
                         } else {
                             // cast the datetime field to a date
                             if (_.has(message.body, 'datetime')){
@@ -436,13 +440,15 @@ module.exports = function breezometerClientConstructor(options){
                                 'Did not receive a 200 status code from Breezometer getForecast');
                             throw new Error('Did not receive a 200 status code from Breezometer getForecast');
                         } else if (_.has(message.body, 'error')){
-                            logger.error({body:message.body, qs:qs},
-                                'Application level error returned from breezometer');
-                            throw new Error('Application error returned from Breezometer. Error: '+message.body);
-                        } else if (_.has(message.body, 'error') && (message.body.error.code === 20 || message.body.error.code === 21)){
-                            logger.info({error:message.body.error, qs:qs},
-                                'Location not supported by Breezometer');
-                            break;
+                            if (message.body.error.code === 20 || message.body.error.code === 21) {
+                                logger.info({error:message.body.error, qs:qs},
+                                    'Location not supported by Breezometer');
+                                break;
+                            } else {
+                                logger.error({body:message.body, qs:qs},
+                                    'Application level error returned from breezometer');
+                                throw new Error('Application error returned from Breezometer. Error: '+message.body);
+                            }
                         } else {
                             // cast the datetime field to a date
                             if (_.has(message.body, 'datetime')){
