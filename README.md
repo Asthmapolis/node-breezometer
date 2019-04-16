@@ -51,8 +51,7 @@ client.getHistoricalAirQuaility({ lat: 43.067475, lon:-89.392808, hours:8 }, fun
 });
 
 // w/async await
-data = await client.getHistoricalAirQuaility({ lat: 43.067475, lon:-89.392808, startDate: new Date(Date.now() - 864000000), endDate: new Date(Date.now() - 432000000) });
-
+data = await client.getHistoricalAirQuaility({ lat: 43.067475, lon:-89.392808, hours:8 });
 
 
 // get a forecast for the next 8 hours
@@ -75,7 +74,7 @@ client.getForecast({ lat: 43.067475, lon:-89.392808, startDate: new Date(Date.no
 // w/async await
 data = await client.getForecast({ lat: 43.067475, lon:-89.392808, startDate: new Date(Date.now() + 3600000), endDate: new Date(Date.now() + 864000000) });
 
-// get a forecase ending at a datetime
+// get a forecast ending at a datetime
 
 // w/callback
 client.getForecast({ lat: 43.067475, lon:-89.392808, dateTime: new Date(Date.now() + 864000000)}, function(err, data){
