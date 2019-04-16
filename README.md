@@ -218,7 +218,7 @@ var options = {
 	lat: 43.067475,
 	lon:-89.392808,
 	lang: 'en',
-	features:['breezometer_aqi', 'country_aqi','pollutants'],
+	features:['breezometer_aqi', 'local_aqi','pollutants_aqi_information'],
 	hours: 8
 };
 

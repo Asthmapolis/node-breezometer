@@ -43,7 +43,7 @@ module.exports = function breezometerClientConstructor(options){
         headers: _.defaults(options.headers, {
 			"User-Agent": "node-breezometer/" +packageJson.version
         }),
-        retryTimes: 1,
+        retryTimes: 10,
         logger: {
             fatal: _.noop,
             error: _.noop,
@@ -77,7 +77,7 @@ module.exports = function breezometerClientConstructor(options){
         * @param {Number} options.lng WGS84 standard longitude
         * @param {String} [options.lang=en] language used for the request
         * @param {String[]} [options.features] sets the data fields returned by the response
-        * @param {Boolean} options.metadata includes request metadata in the response
+        * @param {Boolean} [options.metadata] includes request metadata in the response
         * @param {module:breezometer/client~getAirQualityCallback} [callback] callback
 		*/
         getAirQuality: async function getAirQuality(options, callback){
@@ -196,6 +196,7 @@ module.exports = function breezometerClientConstructor(options){
         * @param {Date} [options.startDate] ISO8601 start date for a range of historical air quality results
         * @param {Date} [options.endDate] ISO8601 end date for a range of historical air quality results
         * @param {Number} [options.hours] Number of historical hourly forecasts to receive
+        * @param {Boolean} [options.metadata] includes request metadata in the response
         * @param {module:breezometer/client~getHistoricalAirQuaility} [callback] callback
 		*/
         getHistoricalAirQuaility: async function getHistoricalAirQuaility(options, callback){
