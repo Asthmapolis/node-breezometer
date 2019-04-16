@@ -312,7 +312,7 @@ describe('getAirQuality', ()=>{
             });
         });
         it('matches', (done)=>{
-            let lang = _.sample(['en','he']);
+            let lang = _.sample(['en','fr']);
             client.getAirQuality({lat:43.067475, lon: -89.392808, lang:lang}, (err)=>{
                 should.not.exist(err);
                 sendStub.calledOnce.should.equal(true);
@@ -333,7 +333,7 @@ describe('getAirQuality', ()=>{
             sendStub.calledOnce.should.equal(true);
         });
         it('matches', async ()=>{
-            let lang = _.sample(['en','he']);
+            let lang = _.sample(['en','fr']);
             await client.getAirQuality({lat:43.067475, lon: -89.392808, lang:lang});
             sendStub.calledOnce.should.equal(true);
             sendStub.calledWith(sinon.match({ qs:{ lang: lang }  })).should.equal(true);
@@ -346,6 +346,189 @@ describe('getAirQuality', ()=>{
                 threw = true;
             }
 
+            threw.should.equal(true);
+        });
+    });
+    describe('features callback', ()=>{
+        it('undefined works', ()=> {
+            client.getAirQuality({lat:43.067475, lon: -89.392808}, (err)=>{
+                should.not.exist(err);
+                sendStub.calledOnce.should.equal(true);
+            });
+        });
+        it('matches', (done)=>{
+            let features = _.sample([
+                'breezometer_aqi',
+                'local_aqi',
+                'health_recommendations',
+                'sources_and_effects',
+                'dominant_pollutant_concentrations',
+                'pollutants_concentrations',
+                'pollutants_aqi_information'
+            ], 3);
+            client.getAirQuality({lat:43.067475, lon: -89.392808, features:features}, (err)=>{
+                should.not.exist(err);
+                sendStub.calledOnce.should.equal(true);
+                sendStub.calledWith(sinon.match({ qs:{ features: features.join() }  })).should.equal(true);
+                done();
+            });
+        });
+        it('not array error', (done)=> {
+            client.getAirQuality({lat: 43.067475, lon: -89.392808, features: 'foo'}, (err)=>{
+                should.exist(err);
+                done();
+            });
+        });
+        it('empty error', (done)=> {
+            client.getAirQuality({lat: 43.067475, lon: -89.392808, features: []}, (err)=>{
+                should.exist(err);
+                done();
+            });
+        });
+        it('invalid feature error', (done)=> {
+            client.getAirQuality({lat: 43.067475, lon: -89.392808, features: ['foo']}, (err)=>{
+                should.exist(err);
+                done();
+            });
+        });
+        it('duplicate feature error', (done)=> {
+            client.getAirQuality({lat: 43.067475, lon: -89.392808, features: ['breezometer_aqi', 'breezometer_aqi']}, (err)=>{
+                should.exist(err);
+                done();
+            });
+        });
+    });
+    describe('features promises', ()=>{
+        it('undefined works', async ()=>{
+            await client.getAirQuality({lat:43.067475, lon: -89.392808});
+            sendStub.calledOnce.should.equal(true);
+        });
+        it('matches', async ()=>{
+            let features = _.sample([
+                'breezometer_aqi',
+                'local_aqi',
+                'health_recommendations',
+                'sources_and_effects',
+                'dominant_pollutant_concentrations',
+                'pollutants_concentrations',
+                'pollutants_aqi_information'
+            ], 3);
+            await client.getAirQuality({lat:43.067475, lon: -89.392808, features:features});
+            sendStub.calledOnce.should.equal(true);
+            sendStub.calledWith(sinon.match({ qs:{ features: features.join() }  })).should.equal(true);
+        });
+        it('not array error', async ()=> {
+            let threw = false;
+            try {
+                await client.getAirQuality({lat:43.067475, lon: -89.392808, features:'foo'});
+            } catch (err){
+                threw = true;
+            }
+
+            threw.should.equal(true);
+        });
+        it('empty error', async ()=> {
+            let threw = false;
+            try {
+                await client.getAirQuality({lat:43.067475, lon: -89.392808, features: []});
+            } catch (err){
+                threw = true;
+            }
+
+            threw.should.equal(true);
+        });
+        it('invalid feature error', async ()=> {
+            let threw = false;
+            try {
+                await client.getAirQuality({lat:43.067475, lon: -89.392808, features: ['foo']});
+            } catch (err){
+                threw = true;
+            }
+
+            threw.should.equal(true);
+        });
+        it('duplicate feature error', async ()=> {
+            let threw = false;
+            try {
+                await client.getAirQuality({lat:43.067475, lon: -89.392808, features: ['breezometer_aqi', 'breezometer_aqi']});
+            } catch (err){
+                threw = true;
+            }
+
+            threw.should.equal(true);
+        });
+    });
+    describe('metadata callback', () =>{
+        it('undefined works', (done)=>{
+            client.getAirQuality({lat:43.067475, lon: -89.392808}, (err)=>{
+                should.not.exist(err);
+                sendStub.calledOnce.should.equal(true);
+                done();
+            });
+        });
+        it('matches', (done)=>{
+            let metadata = _.sample([true, false]);
+            client.getAirQuality({lat:43.067475, lon: -89.392808, metadata:metadata}, (err)=>{
+                should.not.exist(err);
+                sendStub.calledOnce.should.equal(true);
+                sendStub.calledWith(sinon.match({ qs:{ metadata: metadata }  })).should.equal(true);
+                done();
+            });
+        });
+        it('not bool err', (done)=>{
+            client.getAirQuality({lat:43.067475, lon: -89.392808, metadata:'foo'}, (err)=>{
+                should.exist(err);
+                done();
+            });
+        });
+    });
+    describe('metadata promises', () =>{
+        it('undefined works', async ()=>{
+            await client.getAirQuality({lat:43.067475, lon: -89.392808});
+            sendStub.calledOnce.should.equal(true);
+        });
+        it('matches', async ()=>{
+            let metadata = _.sample([true, false]);
+            await client.getAirQuality({lat:43.067475, lon: -89.392808, metadata:metadata});
+            sendStub.calledOnce.should.equal(true);
+            sendStub.calledWith(sinon.match({ qs:{ metadata: metadata }  })).should.equal(true);
+        });
+        it('not bool err', async ()=>{
+            let threw = false;
+            try {
+                await client.getAirQuality({lat:43.067475, lon: -89.392808, metadata:'foo'});
+            } catch (err){
+                threw = true;
+            }
+
+            threw.should.equal(true);
+        });
+    });
+    describe('key callback', ()=> {
+        it('forbidden err', (done)=>{
+            client.getAirQuality({
+                lat:43.067475,
+                lon: -89.392808,
+                key: 'foo'
+            }, (err)=>{
+                should.exist(err);
+                done();
+            });
+        });
+    });
+    describe('key promises', ()=> {
+        it('forbidden err', async ()=>{
+            let threw = false;
+
+            try {
+                await client.getAirQuality({
+                    lat:43.067475,
+                    lon: -89.392808,
+                    key: 'foo'
+                });
+            } catch (err){
+                threw = true;
+            }
             threw.should.equal(true);
         });
     });

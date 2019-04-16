@@ -1,6 +1,6 @@
 {
   "name": "node-breezometer",
-  "version": "2.0.2",
+  "version": "3.0.0",
   "description": "npm module for breezometer's air quality API",
   "main": "index.js",
   "scripts": {
