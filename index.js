@@ -43,7 +43,7 @@ module.exports = function breezometerClientConstructor(options){
         headers: _.defaults(options.headers, {
 			"User-Agent": "node-breezometer/" +packageJson.version
         }),
-        retryTimes: 10,
+        retryTimes: 1,
         logger: {
             fatal: _.noop,
             error: _.noop,
@@ -140,7 +140,7 @@ module.exports = function breezometerClientConstructor(options){
                             logger.error({statusCode:message.statusCode, body: message.body},
                                 'Did not receive a 200 status code from Breezometer getAirQuality');
                             throw new Error('Did not receive a 200 status code from Breezometer getAirQuality');
-                        } else if (_.has(message.body, 'error')){
+                        } else if (!_.isNull(message.body.error) && !_.isUndefined(message.body.error)) {
                             if (message.body.error.code === 20 || message.body.error.code === 21) {
                                 logger.info({error:message.body.error, qs:qs},
                                     'Location not supported by Breezometer');
@@ -152,8 +152,8 @@ module.exports = function breezometerClientConstructor(options){
                             }
                         } else {
                             // cast the datetime field to a date
-                            if (_.has(message.body, 'datetime')){
-                                message.body.datetime = moment.utc(message.body.datetime, moment.ISO_8601).toDate();
+                            if (_.has(message.body.data, 'datetime')){
+                                message.body.data.datetime = moment.utc(message.body.data.datetime, moment.ISO_8601).toDate();
                             }
 
                             result = message.body;
@@ -161,7 +161,7 @@ module.exports = function breezometerClientConstructor(options){
                         }
                     } catch (sendErr){
                         logger.error(sendErr, 'Error calling Breezometer getAirQuality');
-                        if (i === retryTimes){
+                        if (i + 1 === retryTimes){
                             if (asyncFx){
                                 throw new Error(sendErr);
                             } else {
@@ -195,7 +195,7 @@ module.exports = function breezometerClientConstructor(options){
         * @param {Date} [options.dateTime] ISO8601 date and time you want historical air quality for
         * @param {Date} [options.startDate] ISO8601 start date for a range of historical air quality results
         * @param {Date} [options.endDate] ISO8601 end date for a range of historical air quality results
-       * @param {Number} [options.hours] Number of hourly forecasts to receive from now
+        * @param {Number} [options.hours] Number of historical hourly forecasts to receive
         * @param {module:breezometer/client~getHistoricalAirQuaility} [callback] callback
 		*/
         getHistoricalAirQuaility: async function getHistoricalAirQuaility(options, callback){
@@ -285,7 +285,7 @@ module.exports = function breezometerClientConstructor(options){
                             logger.error({statusCode:message.statusCode, body: message.body},
                                 'Did not receive a 200 status code from Breezometer getHistoricalAirQuaility');
                             throw new Error('Did not receive a 200 status code from Breezometer getHistoricalAirQuaility');
-                        } else if (_.has(message.body, 'error')){
+                        } else if (!_.isNull(message.body.error) && !_.isUndefined(message.body.error)) {
                             if (message.body.error.code === 20 || message.body.error.code === 21) {
                                 logger.info({error:message.body.error, qs:qs},
                                     'Location not supported by Breezometer');
@@ -297,8 +297,8 @@ module.exports = function breezometerClientConstructor(options){
                             }
                         } else {
                             // cast the datetime field to a date
-                            if (_.has(message.body, 'datetime')){
-                                message.body.datetime = moment.utc(message.body.datetime, moment.ISO_8601).toDate();
+                            if (_.has(message.body.data, 'datetime')){
+                                message.body.data.datetime = moment.utc(message.body.data.datetime, moment.ISO_8601).toDate();
                             }
 
                             result = message.body;
@@ -306,7 +306,7 @@ module.exports = function breezometerClientConstructor(options){
                         }
                     } catch (sendErr){
                         logger.error(sendErr, 'Error calling Breezometer getHistoricalAirQuaility');
-                        if (i === retryTimes){
+                        if (i + 1 === retryTimes){
                             if (asyncFx){
                                 throw new Error(sendErr);
                             } else {
@@ -414,7 +414,7 @@ module.exports = function breezometerClientConstructor(options){
 
                     try {
                         let message = await baseRequest({
-                            uri: "air-quality/v2/historical/forecast/hourly?",
+                            uri: "air-quality/v2/forecast/hourly?",
                             qs: qs,
                             json: true
                         });
@@ -423,7 +423,7 @@ module.exports = function breezometerClientConstructor(options){
                             logger.error({statusCode:message.statusCode, body: message.body},
                                 'Did not receive a 200 status code from Breezometer getForecast');
                             throw new Error('Did not receive a 200 status code from Breezometer getForecast');
-                        } else if (_.has(message.body, 'error')){
+                        } else if (!_.isNull(message.body.error) && !_.isUndefined(message.body.error)) {
                             if (message.body.error.code === 20 || message.body.error.code === 21) {
                                 logger.info({error:message.body.error, qs:qs},
                                     'Location not supported by Breezometer');
@@ -435,8 +435,10 @@ module.exports = function breezometerClientConstructor(options){
                             }
                         } else {
                             // cast the datetime field to a date
-                            if (_.has(message.body, 'datetime')){
-                                message.body.datetime = moment.utc(message.body.datetime, moment.ISO_8601).toDate();
+                            for (dataObj in message.body.data) {
+                                if (_.has(dataObj, 'datetime')){
+                                    dataObj.datetime = moment.utc(dataObj.datetime, moment.ISO_8601).toDate();
+                                }
                             }
 
                             result = message.body;
@@ -444,7 +446,7 @@ module.exports = function breezometerClientConstructor(options){
                         }
                     } catch (sendErr){
                         logger.error(sendErr, 'Error calling Breezometer getForecast');
-                        if (i === retryTimes){
+                        if (i + 1 === retryTimes){
                             if (asyncFx){
                                 throw new Error(sendErr);
                             } else {

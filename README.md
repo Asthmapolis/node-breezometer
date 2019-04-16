@@ -36,12 +36,24 @@ data = await client.getHistoricalAirQuaility({ lat: 43.067475, lon:-89.392808, d
 // get the historical air quality for a timespan
 
 // w/callback
-client.getHistoricalAirQuaility({ lat: 43.067475, lon:-89.392808, startDate: new Date(Date.now() - 1728000000), endDate: new Date(Date.now() - 864000000), interval:1 }, function(err, data){
+client.getHistoricalAirQuaility({ lat: 43.067475, lon:-89.392808, startDate: new Date(Date.now() - 864000000), endDate: new Date(Date.now() - 432000000)}, function(err, data){
 	
 });
 
 // w/async await
-data = await client.getHistoricalAirQuaility({ lat: 43.067475, lon:-89.392808, startDate: new Date(Date.now() - 1728000000), endDate: new Date(Date.now() - 864000000), interval:1 });
+data = await client.getHistoricalAirQuaility({ lat: 43.067475, lon:-89.392808, hours:8 });
+
+// get the historical air quality for the last 8 hours
+
+// w/callback
+client.getHistoricalAirQuaility({ lat: 43.067475, lon:-89.392808, hours:8 }, function(err, data){
+	
+});
+
+// w/async await
+data = await client.getHistoricalAirQuaility({ lat: 43.067475, lon:-89.392808, startDate: new Date(Date.now() - 864000000), endDate: new Date(Date.now() - 432000000) });
+
+
 
 // get a forecast for the next 8 hours
 
@@ -56,12 +68,22 @@ data = await client.getForecast({ lat: 43.067475, lon:-89.392808, hours:8 });
 // get a forecast for a date range
 
 // w/callback
-client.getForecast({ lat: 43.067475, lon:-89.392808, startDate: new Date(), endDate: new Date(Date.now() + 864000000) }, function(err, data){
+client.getForecast({ lat: 43.067475, lon:-89.392808, startDate: new Date(Date.now() + 3600000), endDate: new Date(Date.now() + 864000000) }, function(err, data){
 	
 });
 
 // w/async await
-data = await client.getForecast({ lat: 43.067475, lon:-89.392808, startDate: new Date(), endDate: new Date(Date.now() + 864000000) });
+data = await client.getForecast({ lat: 43.067475, lon:-89.392808, startDate: new Date(Date.now() + 3600000), endDate: new Date(Date.now() + 864000000) });
+
+// get a forecase ending at a datetime
+
+// w/callback
+client.getForecast({ lat: 43.067475, lon:-89.392808, dateTime: new Date(Date.now() + 864000000)}, function(err, data){
+	
+});
+
+// w/async await
+data = await client.getForecast({ lat: 43.067475, lon:-89.392808, dateTime: new Date(Date.now() + 864000000)});
 ```
 
 ## Features
@@ -86,14 +108,14 @@ var options = {
 	lat: 43.067475,
 	lon:-89.392808,
 	lang: 'en',
-	fields:['breezometer_aqi', 'country_aqi','pollutants']
+	features:['breezometer_aqi', 'local_aqi','pollutants_aqi_information']
 };
 
 // get the air quality by geocode
-client.getAirQuality(options, function(err, data){
+client.getAirQuality(options, function(err, body){
 	if (err){
 		console.log('derp! an error calling getAirQuality: ' + err);
-	} else if (!data){
+	} else if (!body.data){
 		// location does not have data
 	} else {
 		// the world is good! start processing the air quality
@@ -107,7 +129,8 @@ client.getAirQuality(options, function(err, data){
 | lat       | WGS84 standard latitude       | Number	| Yes      |
 | lon       | WGS84 standard latitude       | Number	| Yes      |
 | lang      | language used for the request | String	| No       |
-| fields    | Filter the response fields 	| String[]	| No       |
+| features  | Filter the response fields 	| String[]	| No       |
+| metatdata | Include metadata in response  | Boolean   | No       |
 
 ## getHistoricalAirQuaility
 
@@ -127,10 +150,10 @@ var options = {
 };
 
 // get the historical air quality for a dateTime
-client.getHistoricalAirQuaility(options, function(err, data){
+client.getHistoricalAirQuaility(options, function(err, body){
 	if (err){
 		console.log('derp! an error calling getHistoricalAirQuaility: ' + err);
-	} else if (!data){
+	} else if (!body.data){
 		// location does not have data
 	} else {
 		// the world is good! start processing the air quality
@@ -156,10 +179,10 @@ var options = {
 };
 
 // get the historical air quality for a date range
-client.getHistoricalAirQuaility(options function(err, data){
+client.getHistoricalAirQuaility(options function(err, body){
 	if (err){
 		console.log('derp! an error calling getHistoricalAirQuaility: ' + err);
-	} else if (!data){
+	} else if (!body.data){
 		// location does not have data
 	} else {
 		// the world is good! start processing the air quality reports
@@ -173,11 +196,12 @@ client.getHistoricalAirQuaility(options function(err, data){
 | lat       | WGS84 standard latitude                                          | Number 	| Yes      |
 | lon       | WGS84 standard latitude                                          | Number 	| Yes      |
 | lang      | language used for the request                                    | String   	| No       |
-| fields    | Filter the response fields 									   | String[]	| No       |
+| features  | Filter the response fields 									   | String[]	| No       |
 | dateTime  | ISO8601 date and time you want historical air quality for        | Date   	| No       |
 | startDate | ISO8601 start date for a range of historical air quality results | Date   	| No       |
 | endDate   | ISO8601 end date for a range of historical air quality results   | Date   	| No       |
-| interval  | A time interval represents a period of time (hours)              | Number 	| No       |
+| hours 	| Number of historical hourly forecasts to receive				   | Number   	| No       |
+| metadata  | Include metadata in response 								 	   | Boolean    | No       |
 
 ## getForecast
 
@@ -194,15 +218,15 @@ var options = {
 	lat: 43.067475,
 	lon:-89.392808,
 	lang: 'en',
-	fields:['breezometer_aqi', 'country_aqi','pollutants'],
+	features:['breezometer_aqi', 'country_aqi','pollutants'],
 	hours: 8
 };
 
 // get an hourly forecast for a location for the next 8 hours
-client.getForecast(options function(err, data){
+client.getForecast(options function(err, body){
 	if (err){
 		console.log('derp! an error calling getForecast: ' + err);
-	} else if (!data){
+	} else if (!body.data){
 		// location does not have data
 	} else {
 		// the world is good! start processing the hourly air quality forecasts
@@ -225,10 +249,10 @@ var options = {
 };
 
 // get an hourly forecast for the next 24 hours
-client.getForecast(options function(err, data){
+client.getForecast(options function(err, body){
 	if (err){
 		console.log('derp! an error calling getForecast: ' + err);
-	} else if (!data){
+	} else if (!body.data){
 		// location does not have data
 	} else {
 		// the world is good! start processing the hourly air quality forecasts
@@ -242,10 +266,12 @@ client.getForecast(options function(err, data){
 | lat       | WGS84 standard latitude                                                        | Number 	| Yes      |
 | lon       | WGS84 standard latitude                                                        | Number 	| Yes      |
 | lang      | language used for the request                                                  | String 	| No       |
-| fields    | Filter the response fields 									   				 | String[]	| No       |
+| features  | Filter the response fields 									   				 | String[]	| No       |
 | startDate | A specific start date range to get predictions for.,Can not be used with hours | Date   	| No       |
 | endDate   | IA specific end date range to get predictions for.,Can not be used with hours  | Date   	| No       |
 | hours     | Number of hourly forecasts to receive from now                                 | Number 	| No       |
+| dateTime  | ISO8601 date and time you want forecasted air quality until        			 | Date   	| No       |
+| metadata  | Include metadata in response 								 	   				 | Boolean  | No       |
 
 ## Contributing
 
