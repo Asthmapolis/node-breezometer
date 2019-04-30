@@ -404,6 +404,334 @@ describe('getForecast', ()=>{
             sendStub.calledWith(sinon.match({ qs:{ lon: lon }  })).should.equal(true);
         });
     });
+    describe('features callback', ()=>{
+        it('undefined works', ()=> {
+            let hours = r.integer(1, 24);
+            client.getForecast({lat:43.067475, lon: -89.392808, hours: hours}, (err)=>{
+                should.not.exist(err);
+                sendStub.calledOnce.should.equal(true);
+            });
+        });
+        it('matches', (done)=>{
+            let hours = r.integer(1, 24);
+            let features = _.sample([
+                'breezometer_aqi',
+                'local_aqi',
+                'health_recommendations',
+                'sources_and_effects',
+                'dominant_pollutant_concentrations',
+                'pollutants_concentrations',
+                'pollutants_aqi_information'
+            ], 3);
+            client.getForecast({lat:43.067475, lon: -89.392808, hours:hours, features:features}, (err)=>{
+                should.not.exist(err);
+                sendStub.calledOnce.should.equal(true);
+                sendStub.calledWith(sinon.match({ qs:{ features: features.join() }  })).should.equal(true);
+                done();
+            });
+        });
+        it('not array error', (done)=> {
+            let hours = r.integer(1, 24);
+            client.getForecast({lat: 43.067475, lon: -89.392808, hours:hours, features: 'foo'}, (err)=>{
+                should.exist(err);
+                done();
+            });
+        });
+        it('empty error', (done)=> {
+            let hours = r.integer(1, 24);
+            client.getForecast({lat: 43.067475, lon: -89.392808, hours:hours, features: []}, (err)=>{
+                should.exist(err);
+                done();
+            });
+        });
+        it('invalid feature error', (done)=> {
+            let hours = r.integer(1, 24);
+            client.getForecast({lat: 43.067475, lon: -89.392808, hours:hours, features: ['foo']}, (err)=>{
+                should.exist(err);
+                done();
+            });
+        });
+        it('duplicate feature error', (done)=> {
+            let hours = r.integer(1, 24);
+            client.getForecast({lat: 43.067475, lon: -89.392808, hours:hours, features: ['breezometer_aqi', 'breezometer_aqi']}, (err)=>{
+                should.exist(err);
+                done();
+            });
+        });
+    });
+    describe('features promises', ()=>{
+        it('undefined works', async ()=>{
+            let hours = r.integer(1, 24);
+            await client.getForecast({lat:43.067475, lon: -89.392808, hours:hours});
+            sendStub.calledOnce.should.equal(true);
+        });
+        it('matches', async ()=>{
+            let hours = r.integer(1, 24);
+            let features = _.sample([
+                'breezometer_aqi',
+                'local_aqi',
+                'health_recommendations',
+                'sources_and_effects',
+                'dominant_pollutant_concentrations',
+                'pollutants_concentrations',
+                'pollutants_aqi_information'
+            ], 3);
+            await client.getForecast({lat:43.067475, lon: -89.392808, hours:hours, features:features});
+            sendStub.calledOnce.should.equal(true);
+            sendStub.calledWith(sinon.match({ qs:{ features: features.join() }  })).should.equal(true);
+        });
+        it('not array error', async ()=> {
+            let threw = false;
+            let hours = r.integer(1, 24);
+            try {
+                await client.getForecast({lat:43.067475, lon: -89.392808, hours:hours, features:'foo'});
+            } catch (err){
+                threw = true;
+            }
+
+            threw.should.equal(true);
+        });
+        it('empty error', async ()=> {
+            let threw = false;
+            let hours = r.integer(1, 24);
+            try {
+                await client.getForecast({lat:43.067475, lon: -89.392808, hours:hours, features: []});
+            } catch (err){
+                threw = true;
+            }
+
+            threw.should.equal(true);
+        });
+        it('invalid feature error', async ()=> {
+            let threw = false;
+            let hours = r.integer(1, 24);
+            try {
+                await client.getForecast({lat:43.067475, lon: -89.392808, hours:hours, features: ['foo']});
+            } catch (err){
+                threw = true;
+            }
+
+            threw.should.equal(true);
+        });
+        it('duplicate feature error', async ()=> {
+            let threw = false;
+            let hours = r.integer(1, 24);
+            try {
+                await client.getForecast({lat:43.067475, lon: -89.392808, hours:hours, features: ['breezometer_aqi', 'breezometer_aqi']});
+            } catch (err){
+                threw = true;
+            }
+
+            threw.should.equal(true);
+        });
+    });
+    describe('key callback', ()=> {
+        it('forbidden err', (done)=>{
+            client.getForecast({
+                lat:43.067475,
+                lon: -89.392808,
+                key: 'foo'
+            }, (err)=>{
+                should.exist(err);
+                done();
+            });
+        });
+    });
+    describe('key promises', ()=> {
+        it('forbidden err', async ()=>{
+            let threw = false;
+
+            try {
+                await client.getForecast({
+                    lat:43.067475,
+                    lon: -89.392808,
+                    key: 'foo'
+                });
+            } catch (err){
+                threw = true;
+            }
+            threw.should.equal(true);
+        });
+    });
+    describe('metadata callback', () =>{
+        it('undefined works', (done)=>{
+            let hours = r.integer(1, 24);
+            client.getForecast({lat:43.067475, lon: -89.392808, hours: hours}, (err)=>{
+                should.not.exist(err);
+                sendStub.calledOnce.should.equal(true);
+                done();
+            });
+        });
+        it('matches', (done)=>{
+            let metadata = _.sample([true, false]);
+            let hours = r.integer(1, 24);
+            client.getForecast({lat:43.067475, lon: -89.392808, hours:hours, metadata:metadata}, (err)=>{
+                should.not.exist(err);
+                sendStub.calledOnce.should.equal(true);
+                sendStub.calledWith(sinon.match({ qs:{ metadata: metadata }  })).should.equal(true);
+                done();
+            });
+        });
+        it('not bool err', (done)=>{
+            let hours = r.integer(1, 24);
+            client.getForecast({lat:43.067475, lon: -89.392808, hours:hours, metadata:'foo'}, (err)=>{
+                should.exist(err);
+                done();
+            });
+        });
+    });
+    describe('metadata promises', () =>{
+        it('undefined works', async ()=>{
+            let hours = r.integer(1, 24);
+            await client.getForecast({lat:43.067475, lon: -89.392808, hours:hours});
+            sendStub.calledOnce.should.equal(true);
+        });
+        it('matches', async ()=>{
+            let metadata = _.sample([true, false]);
+            let hours = r.integer(1, 24);
+            await client.getForecast({lat:43.067475, lon: -89.392808, metadata:metadata, hours:hours});
+            sendStub.calledOnce.should.equal(true);
+            sendStub.calledWith(sinon.match({ qs:{ metadata: metadata }  })).should.equal(true);
+        });
+        it('not bool err', async ()=>{
+            let threw = false;
+            let hours = r.integer(1, 24);
+            try {
+                await client.getForecast({lat:43.067475, lon: -89.392808, hours:hours, metadata:'foo'});
+            } catch (err){
+                threw = true;
+            }
+
+            threw.should.equal(true);
+        });
+    });
+    describe('datetime callback', ()=>{
+        it('not date err', (done)=>{
+            client.getForecast({
+                lat:43.067475,
+                lon: -89.392808,
+                datetime: 'foo'
+            }, (err)=>{
+                should.exist(err);
+                done();
+            });
+        });
+        it('past date err', (done)=>{
+            client.getForecast({
+                lat:43.067475,
+                lon: -89.392808,
+                datetime: new Date(Date.now() - 60000)
+            }, (err)=>{
+                should.exist(err);
+                done();
+            });
+        });
+        it('undefined & range undefined err', (done)=>{
+            client.getForecast({
+                lat:43.067475,
+                lon: -89.392808
+            }, (err)=>{
+                should.exist(err);
+                done();
+            });
+        });
+        it('set & range set err', (done)=>{
+            client.getForecast({
+                lat:43.067475,
+                lon: -89.392808,
+                datetime: new Date(),
+                startDate: new Date(),
+                endDate: new Date(Date.now() + 60000)
+            }, (err)=>{
+                should.exist(err);
+                done();
+            });
+        });
+        it('matches', (done)=>{
+            let datetime = new Date();
+            client.getForecast({
+                lat:43.067475,
+                lon: -89.392808,
+                datetime: datetime
+            }, (err)=>{
+                should.not.exist(err);
+                sendStub.calledWith(sinon.match({ qs:{ datetime: datetime }  })).should.equal(true);
+                done();
+            });
+        });
+    });
+    describe('datetime promises', ()=>{
+        it('not date err', async ()=>{
+            let threw = false;
+
+            try {
+                await client.getForecast({
+                    lat:43.067475,
+                    lon: -89.392808,
+                    datetime: 'foo'
+                });
+            } catch (err){
+                threw = true;
+            }
+
+            threw.should.equal(true);
+        });
+        it('past err', async ()=>{
+            let threw = false;
+
+            try {
+                await client.getForecast({
+                    lat:43.067475,
+                    lon: -89.392808,
+                    datetime: new Date(Date.now() - 60000)
+                });
+            } catch (err){
+                threw = true;
+            }
+
+            threw.should.equal(true);
+        });
+        it('undefined & range undefined err', async ()=>{
+            let threw = false;
+
+            try {
+                await client.getForecast({
+                    lat:43.067475,
+                    lon: -89.392808
+                });
+            } catch (err){
+                threw = true;
+            }
+
+            threw.should.equal(true);
+        });
+        it('set & range set err', async ()=>{
+            let threw = false;
+
+            try {
+                await client.getForecast({
+                    lat:43.067475,
+                    lon: -89.392808,
+                    datetime: new Date(),
+                    startDate: new Date(),
+                    endDate: new Date(Date.now() + 60000)
+                });
+            } catch (err){
+                threw = true;
+            }
+
+            threw.should.equal(true);
+        });
+        it('matches', async ()=>{
+            let datetime = new Date();
+            await client.getForecast({
+                lat:43.067475,
+                lon: -89.392808,
+                datetime: datetime
+            });
+            sendStub.calledWith(sinon.match({ qs:{ datetime: datetime }  })).should.equal(true);
+        });
+    });
     describe('hours callback', ()=>{
         it('not number err', (done)=>{
             client.getForecast({
@@ -425,11 +753,11 @@ describe('getForecast', ()=>{
                 done();
             });
         });
-        it('> 24 err', (done)=>{
+        it('> 96 err', (done)=>{
             client.getForecast({
                 lat:43.067475,
                 lon: -89.392808,
-                hours: 25
+                hours: 97
             }, (err)=>{
                 should.exist(err);
                 done();
@@ -500,14 +828,14 @@ describe('getForecast', ()=>{
 
             threw.should.equal(true);
         });
-        it('> 24 err', async ()=>{
+        it('> 96 err', async ()=>{
             let threw = false;
 
             try {
                 await client.getForecast({
                     lat:43.067475,
                     lon: -89.392808,
-                    hours: 25
+                    hours: 97
                 });
             } catch (err){
                 threw = true;
@@ -842,7 +1170,7 @@ describe('getForecast', ()=>{
             });
         });
         it('matches', (done)=>{
-            let lang = _.sample(['en','he']);
+            let lang = _.sample(['en','fr']);
             client.getForecast({lat:43.067475, lon: -89.392808, lang:lang, hours: 8}, (err)=>{
                 should.not.exist(err);
                 sendStub.calledWith(sinon.match({ qs:{ lang: lang }  })).should.equal(true);
@@ -874,9 +1202,9 @@ describe('getForecast', ()=>{
             threw.should.equal(true);
         });
         it('matches', async ()=>{
-            let lang = _.sample(['en','he']);
+            let lang = _.sample(['en','fr']);
             await client.getForecast({lat:43.067475, lon: -89.392808, lang:lang, hours: 8});
             sendStub.calledWith(sinon.match({ qs:{ lang: lang }  })).should.equal(true);
         });
-    });
+    }); 
 });
