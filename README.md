@@ -85,7 +85,7 @@ client.getForecast({ lat: 43.067475, lon:-89.392808, dateTime: new Date(Date.now
 data = await client.getForecast({ lat: 43.067475, lon:-89.392808, dateTime: new Date(Date.now() + 864000000)});
 ```
 
-## Features
+## Air Quality Features
 
 1. Current Air Quality
 2. Historical Air Quality
@@ -270,6 +270,52 @@ client.getForecast(options function(err, body){
 | endDate   | IA specific end date range to get predictions for.,Can not be used with hours  | Date   	| No       |
 | hours     | Number of hourly forecasts to receive from now                                 | Number 	| No       |
 | dateTime  | ISO8601 date and time you want forecasted air quality until        			 | Date   	| No       |
+| metadata  | Include metadata in response 								 	   				 | Boolean  | No       |
+
+## Pollen Features
+
+1. Forecasts
+
+## getDailyPollenForecast
+
+Gets future daily pollen forecast(s) for a location.
+
+### example
+
+```javascript
+const breezometer = require('node-breezometer');
+
+const client = breezometer({ apiKey: 'my breezometer API key' });
+
+// build my options
+var options = {
+	lat: 43.067475,
+	lon:-89.392808,
+	days: 3,
+	features:['types_information', 'plants_information']
+};
+
+// get a daily forecast for a location for the next 3 days
+client.getDailyPollenForecast(options, function(err, body) {
+	if (err){
+		console.log('derp! an error calling getDailyPollenForecast: ' + err);
+	} else if (!body.data){
+		// location does not have data
+	} else {
+		// the world is good! start processing the daily pollen forecasts
+	}
+});
+```
+
+### Options
+
+| Parameter | Description                                                                    | Type   	| Required |
+|-----------|--------------------------------------------------------------------------------|----------|----------|
+| lat       | WGS84 standard latitude                                                        | Number 	| Yes      |
+| lon       | WGS84 standard latitude                                                        | Number 	| Yes      |
+| days | Number of days of forecast to receive | Number   	| Yes       |
+| lang      | Language used for the request                                                  | String 	| No       |
+| features  | Filter the response fields 									   				 | String[]	| No       |
 | metadata  | Include metadata in response 								 	   				 | Boolean  | No       |
 
 ## Contributing
