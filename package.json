@@ -2,7 +2,7 @@
   "name": "node-breezometer",
   "version": "3.0.0",
   "description": "npm module for breezometer's air quality API",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "test": "mocha"
   },
