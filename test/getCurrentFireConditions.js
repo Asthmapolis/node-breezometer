@@ -4,7 +4,7 @@ const sinon     = require('sinon');
 const r         = require('random-js')();
 const _         = require('underscore');
 
-describe('getAirQuality', ()=>{
+describe('getCurrentFireConditions', ()=> {
     let sandbox = undefined;
     let client = undefined;
     let defaultsStub = undefined; 
@@ -22,91 +22,88 @@ describe('getAirQuality', ()=>{
         sandbox.restore();
         done();
     });
-    describe('options callback', ()=>{
-        it('undefined err', (done)=>{
-            client.getAirQuality(undefined, (err)=>{
+    describe('options callback', ()=> {
+        it('undefined err', (done)=> {
+            client.getCurrentFireConditions(undefined, (err)=> {
                 should.exist(err);
                 done();
             });
         });
-        it('null err', (done)=>{
-            client.getAirQuality(null, (err)=>{
+        it('null err', (done)=> {
+            client.getCurrentFireConditions(null, (err)=> {
                 should.exist(err);
                 done();
             });
         });
-        it('not obj err', (done)=>{
-            client.getAirQuality(99, (err)=>{
+        it('not obj err', (done)=> {
+            client.getCurrentFireConditions(99, (err)=> {
                 should.exist(err);
                 done();
             });
         });
     });
-    describe('options promise', ()=>{
+    describe('options promise', ()=> {
         it('undefined err', async ()=>{
             let threw = false;
             try {
-                await client.getAirQuality(undefined);
+                await client.getCurrentFireConditions(undefined);
             } catch (err){
                 threw = true;
             }
-            
             threw.should.equal(true);
         });
         it('null err', async ()=>{
             let threw = false;
             try {
-                await client.getAirQuality(null);
+                await client.getCurrentFireConditions(null);
             } catch (err){
                 threw = true;
             }
-            
             threw.should.equal(true);
         });
         it('not obj err', async ()=>{
             let threw = false;
             try {
-                await client.getAirQuality(99);
+                await client.getCurrentFireConditions(99);
             } catch (err){
                 threw = true;
             }
-            
             threw.should.equal(true);
         });
     });
     describe('lat callback', ()=>{
         it('undefined err', (done)=>{
-            client.getAirQuality({lon: -89.392808}, (err)=>{
+            client.getCurrentFireConditions({lon: -89.392808}, (err)=>{
                 should.exist(err);
                 done();
             });
         });
         it('null err', (done)=>{
-            client.getAirQuality({lat:null, lon: -89.392808}, (err)=>{
+            client.getCurrentFireConditions({lat:null, lon: -89.392808}, (err)=>{
                 should.exist(err);
                 done();
             });
         });
         it('not number err', (done)=>{
-            client.getAirQuality({lat:'foo', lon: -89.392808}, (err)=>{
+            client.getCurrentFireConditions({lat:'foo', lon: -89.392808}, (err)=>{
                 should.exist(err);
                 done();
             });
         });
         it('< -90 err', (done)=>{
-            client.getAirQuality({lat:-91, lon: -89.392808}, (err)=>{
+            client.getCurrentFireConditions({lat:-91, lon: -89.392808}, (err)=>{
                 should.exist(err);
                 done();
             });
         });
         it('> 90 err', (done)=>{
-            client.getAirQuality({lat:91, lon: -89.392808}, (err)=>{
+            client.getCurrentFireConditions({lat:91, lon: -89.392808}, (err)=>{
                 should.exist(err);
                 done();
             });
         });
         it('string number', (done)=>{
-            client.getAirQuality({lat:'43.067475', lon: -89.392808}, (err)=>{
+            client.getCurrentFireConditions({lat:'43.067475', lon: -89.392808}, (err)=>{
                 should.not.exist(err);
                 sendStub.calledOnce.should.equal(true);
                 sendStub.calledWith(sinon.match({ qs:{ lat: 43.067475 }  })).should.equal(true);
@@ -115,7 +112,7 @@ describe('getAirQuality', ()=>{
         });
         it('matches', (done)=>{
             let lat = r.real(-90, 90, true);
-            client.getAirQuality({lat:lat, lon: -89.392808}, (err)=>{
+            client.getCurrentFireConditions({lat:lat, lon: -89.392808}, (err)=>{
                 should.not.exist(err);
                 sendStub.calledOnce.should.equal(true);
                 sendStub.calledWith(sinon.match({ qs:{ lat: lat }  })).should.equal(true);
@@ -128,7 +125,7 @@ describe('getAirQuality', ()=>{
             let threw = false;
 
             try {
-                await client.getAirQuality({lon: -89.392808});
+                await client.getCurrentFireConditions({lon: -89.392808});
             } catch (err){
                 threw = true;
             }
@@ -139,7 +136,7 @@ describe('getAirQuality', ()=>{
             let threw = false;
 
             try {
-                await client.getAirQuality({lat: null, lon: -89.392808});
+                await client.getCurrentFireConditions({lat:null, lon: -89.392808});
             } catch (err){
                 threw = true;
             }
@@ -150,7 +147,7 @@ describe('getAirQuality', ()=>{
             let threw = false;
 
             try {
-                await client.getAirQuality({lat: 'foo', lon: -89.392808});
+                await client.getCurrentFireConditions({lat:'foo', lon: -89.392808});
             } catch (err){
                 threw = true;
             }
@@ -161,7 +158,7 @@ describe('getAirQuality', ()=>{
             let threw = false;
 
             try {
-                await client.getAirQuality({lat: -91, lon: -89.392808});
+                await client.getCurrentFireConditions({lat: -91, lon: -89.392808});
             } catch (err){
                 threw = true;
             }
@@ -172,7 +169,7 @@ describe('getAirQuality', ()=>{
             let threw = false;
 
             try {
-                await client.getAirQuality({lat: 91, lon: -89.392808});
+                await client.getCurrentFireConditions({lat: 91, lon: -89.392808});
             } catch (err){
                 threw = true;
             }
@@ -180,50 +177,50 @@ describe('getAirQuality', ()=>{
             threw.should.equal(true);
         });
         it('string number', async ()=>{
-            await client.getAirQuality({lat: '43.067475', lon: -89.392808});
+            await client.getCurrentFireConditions({lat: '43.067475', lon: -89.392808});
             sendStub.calledOnce.should.equal(true);
             sendStub.calledWith(sinon.match({ qs:{ lat: 43.067475 }  })).should.equal(true);
         });
         it('matches', async ()=>{
             let lat = r.real(-90, 90, true);
-            await client.getAirQuality({lat:lat, lon: -89.392808});
+            await client.getCurrentFireConditions({lat:lat, lon: -89.392808});
             sendStub.calledOnce.should.equal(true);
             sendStub.calledWith(sinon.match({ qs:{ lat: lat }  })).should.equal(true);
         });
     });
     describe('lon callback', ()=>{
         it('undefined err', (done)=>{
-            client.getAirQuality({lat: 43.067475}, (err)=>{
+            client.getCurrentFireConditions({lat: 43.067475}, (err)=>{
                 should.exist(err);
                 done();
             });
         });
         it('null err', (done)=>{
-            client.getAirQuality({lat: 43.067475, lon:null}, (err)=>{
+            client.getCurrentFireConditions({lat: 43.067475, lon:null}, (err)=>{
                 should.exist(err);
                 done();
             });
         });
         it('not number err', (done)=>{
-            client.getAirQuality({lat: 43.067475, lon:'foo'}, (err)=>{
+            client.getCurrentFireConditions({lat: 43.067475, lon:'foo'}, (err)=>{
                 should.exist(err);
                 done();
             });
         });
         it('< -180 err', (done)=>{
-            client.getAirQuality({lat:-181, lon: -89.392808}, (err)=>{
+            client.getCurrentFireConditions({lat:-181, lon: -89.392808}, (err)=>{
                 should.exist(err);
                 done();
             });
         });
         it('> 180 err', (done)=>{
-            client.getAirQuality({lat:181, lon: -89.392808}, (err)=>{
+            client.getCurrentFireConditions({lat:181, lon: -89.392808}, (err)=>{
                 should.exist(err);
                 done();
             });
         });
         it('string number', (done)=>{
-            client.getAirQuality({lat:43.067475, lon: '-89.392808'}, (err)=>{
+            client.getCurrentFireConditions({lat:43.067475, lon: '-89.392808'}, (err)=>{
                 should.not.exist(err);
                 sendStub.calledOnce.should.equal(true);
                 sendStub.calledWith(sinon.match({ qs:{ lon: -89.392808 }  })).should.equal(true);
@@ -232,7 +229,7 @@ describe('getAirQuality', ()=>{
         });
         it('matches', (done)=>{
             let lon = r.real(-90, 90, true);
-            client.getAirQuality({lat:43.067475, lon: lon}, (err)=>{
+            client.getCurrentFireConditions({lat:43.067475, lon: lon}, (err)=>{
                 should.not.exist(err);
                 sendStub.calledOnce.should.equal(true);
                 sendStub.calledWith(sinon.match({ qs:{ lon: lon }  })).should.equal(true);
@@ -244,7 +241,7 @@ describe('getAirQuality', ()=>{
         it('undefined err', async ()=>{
             let threw = false;
             try {
-                await client.getAirQuality({lat: 43.067475});
+                await client.getCurrentFireConditions({lat: 43.067475});
             } catch (err){
                 threw = true;
             }
@@ -254,7 +251,7 @@ describe('getAirQuality', ()=>{
         it('null err', async ()=>{
             let threw = false;
             try {
-                await client.getAirQuality({lat: 43.067475, lon:null});
+                await client.getCurrentFireConditions({lat: 43.067475, lon:null});
             } catch (err){
                 threw = true;
             }
@@ -264,7 +261,7 @@ describe('getAirQuality', ()=>{
         it('not number err', async ()=>{
             let threw = false;
             try {
-                await client.getAirQuality({lat: 43.067475, lon:'foo'});
+                await client.getCurrentFireConditions({lat: 43.067475, lon:'foo'});
             } catch (err){
                 threw = true;
             }
@@ -274,7 +271,7 @@ describe('getAirQuality', ()=>{
         it('< -180 err', async ()=>{
             let threw = false;
             try {
-                await client.getAirQuality({lat: 43.067475, lon:-181});
+                await client.getCurrentFireConditions({lat: 43.067475, lon:-181});
             } catch (err){
                 threw = true;
             }
@@ -284,7 +281,7 @@ describe('getAirQuality', ()=>{
         it('> 180 err', async ()=>{
             let threw = false;
             try {
-                await client.getAirQuality({lat: 43.067475, lon:181});
+                await client.getCurrentFireConditions({lat: 43.067475, lon:181});
             } catch (err){
                 threw = true;
             }
@@ -292,28 +289,155 @@ describe('getAirQuality', ()=>{
             threw.should.equal(true);
         });
         it('string number', async ()=>{
-            await client.getAirQuality({lat: 43.067475, lon:'-89.392808'});
+            await client.getCurrentFireConditions({lat: 43.067475, lon:'-89.392808'});
             sendStub.calledOnce.should.equal(true);
             sendStub.calledWith(sinon.match({ qs:{ lon: -89.392808 }  })).should.equal(true);
         });
         it('matches', async ()=>{
             let lon = r.real(-90, 90, true);
-            await client.getAirQuality({lat: 43.067475, lon:lon});
+            await client.getCurrentFireConditions({lat: 43.067475, lon:lon});
             sendStub.calledOnce.should.equal(true);
             sendStub.calledWith(sinon.match({ qs:{ lon: lon }  })).should.equal(true);
         });
     });
-    describe('lang callback', ()=>{
+    describe('radius callback', ()=> {
         it('undefined works', (done)=>{
-            client.getAirQuality({lat:43.067475, lon: -89.392808}, (err)=>{
+            client.getCurrentFireConditions({lat:43.067475, lon: -89.392808}, (err)=>{
                 should.not.exist(err);
                 sendStub.calledOnce.should.equal(true);
                 done();
             });
         });
         it('matches', (done)=>{
-            let lang = _.sample(['en','fr']);
-            client.getAirQuality({lat:43.067475, lon: -89.392808, lang:lang}, (err)=>{
+            let rad = r.integer(1, 100, true);
+            client.getCurrentFireConditions({lat:43.067475, lon: -89.392808, radius:rad}, (err)=>{
+                should.not.exist(err);
+                sendStub.calledOnce.should.equal(true);
+                sendStub.calledWith(sinon.match({ qs:{ radius: rad }  })).should.equal(true);
+                done();
+            });
+        });
+        it('invalid type err', (done)=>{
+            client.getCurrentFireConditions({lat:43.067475, lon: -89.392808, radius:'foo'}, (err)=>{
+                should.exist(err);
+                done();
+            });
+        });
+        it('< 1 err', (done)=>{
+            client.getCurrentFireConditions({lat:43.067475, lon: -89.392808, radius:0}, (err)=>{
+                should.exist(err);
+                done();
+            });
+        });
+        it('> 62 as imperial', (done)=>{
+            let rad = r.integer(63, 100, true);
+            client.getCurrentFireConditions({lat:43.067475, lon: -89.392808, radius:rad, units: 'imperial'}, (err)=>{
+                should.exist(err);
+                done();
+            });
+        });
+    });
+    describe('radius promise', ()=>{
+        it('undefined works', async ()=>{
+            await client.getCurrentFireConditions({lat:43.067475, lon: -89.392808});
+            sendStub.calledOnce.should.equal(true);
+            sendStub.calledWith(sinon.match({ qs:{ lon: -89.392808, lat: 43.067475}  })).should.equal(true);
+        });
+        it('matches', async ()=>{
+            let rad = r.integer(1, 100, true);
+            await client.getCurrentFireConditions({lat:43.067475, lon: -89.392808, radius:rad});
+            sendStub.calledOnce.should.equal(true);
+            sendStub.calledWith(sinon.match({ qs:{ radius: rad }  })).should.equal(true);
+        });
+        it('invalid type err', async ()=>{
+            let threw = false;
+            try {
+                await client.getCurrentFireConditions({lat:43.067475, lon: -89.392808, radius: 'foo'});
+            } catch (err){
+                threw = true;
+            }
+
+            threw.should.equal(true);
+        });
+        it('< 1 err', async ()=>{
+            let threw = false;
+            try {
+                await client.getCurrentFireConditions({lat:43.067475, lon: -89.392808, radius: 0});
+            } catch (err){
+                threw = true;
+            }
+
+            threw.should.equal(true);
+        });
+        it('> 62 as imperial err', async ()=>{
+            let threw = false;
+            let rad = r.integer(63, 100, true);
+            try {
+                await client.getCurrentFireConditions({lat:43.067475, lon: -89.392808, radius: rad, units: 'imperial'});
+            } catch (err){
+                threw = true;
+            }
+
+            threw.should.equal(true);
+        });
+    });
+    describe('units callback', ()=>{
+        it('undefined works', (done)=>{
+            client.getCurrentFireConditions({lat:43.067475, lon: -89.392808}, (err)=>{
+                should.not.exist(err);
+                sendStub.calledOnce.should.equal(true);
+                done();
+            });
+        });
+        it('matches', (done)=>{
+            let units = _.sample(['imperial', 'metric']);
+            client.getCurrentFireConditions({lat:43.067475, lon: -89.392808, units:units}, (err)=>{
+                should.not.exist(err);
+                sendStub.calledOnce.should.equal(true);
+                sendStub.calledWith(sinon.match({ qs:{ units: units }  })).should.equal(true);
+                done();
+            });
+        });
+        it('invalid err', (done)=>{
+            client.getCurrentFireConditions({lat:43.067475, lon: -89.392808, units:'foo'}, (err)=>{
+                should.exist(err);
+                done();
+            });
+        });
+    });
+    describe('units promises', ()=>{
+        it('undefined works', async ()=>{
+            await client.getCurrentFireConditions({lat:43.067475, lon: -89.392808});
+            sendStub.calledOnce.should.equal(true);
+        });
+        it('matches', async ()=>{
+            let units = _.sample(['imperial', 'metric']);
+            await client.getCurrentFireConditions({lat:43.067475, lon: -89.392808, units:units});
+            sendStub.calledOnce.should.equal(true);
+            sendStub.calledWith(sinon.match({ qs:{ units: units }  })).should.equal(true);
+        });
+        it('invalid err', async ()=>{
+            let threw = false;
+            try {
+                await client.getCurrentFireConditions({lat:43.067475, lon: -89.392808, units:'foo'});
+            } catch (err){
+                threw = true;
+            }
+
+            threw.should.equal(true);
+        });
+    });
+    describe('lang callback', ()=>{
+        it('undefined works', (done)=>{
+            client.getCurrentFireConditions({lat:43.067475, lon: -89.392808}, (err)=>{
+                should.not.exist(err);
+                sendStub.calledOnce.should.equal(true);
+                done();
+            });
+        });
+        it('matches', (done)=>{
+            let lang = _.sample(['en']);
+            client.getCurrentFireConditions({lat:43.067475, lon: -89.392808, lang:lang}, (err)=>{
                 should.not.exist(err);
                 sendStub.calledOnce.should.equal(true);
                 sendStub.calledWith(sinon.match({ qs:{ lang: lang }  })).should.equal(true);
@@ -321,7 +445,7 @@ describe('getAirQuality', ()=>{
             });
         });
         it('invalid err', (done)=>{
-            client.getAirQuality({lat:43.067475, lon: -89.392808, lang:'foo'}, (err)=>{
+            client.getCurrentFireConditions({lat:43.067475, lon: -89.392808, lang:'foo'}, (err)=>{
                 should.exist(err);
                 done();
             });
@@ -329,128 +453,19 @@ describe('getAirQuality', ()=>{
     });
     describe('lang promise', ()=>{
         it('undefined works', async ()=>{
-            await client.getAirQuality({lat:43.067475, lon: -89.392808});
+            await client.getCurrentFireConditions({lat:43.067475, lon: -89.392808});
             sendStub.calledOnce.should.equal(true);
         });
         it('matches', async ()=>{
-            let lang = _.sample(['en','fr']);
-            await client.getAirQuality({lat:43.067475, lon: -89.392808, lang:lang});
+            let lang = _.sample(['en']);
+            await client.getCurrentFireConditions({lat:43.067475, lon: -89.392808, lang:lang});
             sendStub.calledOnce.should.equal(true);
             sendStub.calledWith(sinon.match({ qs:{ lang: lang }  })).should.equal(true);
         });
         it('invalid err', async ()=>{
             let threw = false;
             try {
-                await client.getAirQuality({lat:43.067475, lon: -89.392808, lang:'foo'});
-            } catch (err){
-                threw = true;
-            }
-
-            threw.should.equal(true);
-        });
-    });
-    describe('features callback', ()=>{
-        it('undefined works', ()=> {
-            client.getAirQuality({lat:43.067475, lon: -89.392808}, (err)=>{
-                should.not.exist(err);
-                sendStub.calledOnce.should.equal(true);
-            });
-        });
-        it('matches', (done)=>{
-            let features = _.sample([
-                'breezometer_aqi',
-                'local_aqi',
-                'health_recommendations',
-                'sources_and_effects',
-                'dominant_pollutant_concentrations',
-                'pollutants_concentrations',
-                'pollutants_aqi_information'
-            ], 3);
-            client.getAirQuality({lat:43.067475, lon: -89.392808, features:features}, (err)=>{
-                should.not.exist(err);
-                sendStub.calledOnce.should.equal(true);
-                sendStub.calledWith(sinon.match({ qs:{ features: features.join() }  })).should.equal(true);
-                done();
-            });
-        });
-        it('not array error', (done)=> {
-            client.getAirQuality({lat: 43.067475, lon: -89.392808, features: 'foo'}, (err)=>{
-                should.exist(err);
-                done();
-            });
-        });
-        it('empty error', (done)=> {
-            client.getAirQuality({lat: 43.067475, lon: -89.392808, features: []}, (err)=>{
-                should.exist(err);
-                done();
-            });
-        });
-        it('invalid feature error', (done)=> {
-            client.getAirQuality({lat: 43.067475, lon: -89.392808, features: ['foo']}, (err)=>{
-                should.exist(err);
-                done();
-            });
-        });
-        it('duplicate feature error', (done)=> {
-            client.getAirQuality({lat: 43.067475, lon: -89.392808, features: ['breezometer_aqi', 'breezometer_aqi']}, (err)=>{
-                should.exist(err);
-                done();
-            });
-        });
-    });
-    describe('features promises', ()=>{
-        it('undefined works', async ()=>{
-            await client.getAirQuality({lat:43.067475, lon: -89.392808});
-            sendStub.calledOnce.should.equal(true);
-        });
-        it('matches', async ()=>{
-            let features = _.sample([
-                'breezometer_aqi',
-                'local_aqi',
-                'health_recommendations',
-                'sources_and_effects',
-                'dominant_pollutant_concentrations',
-                'pollutants_concentrations',
-                'pollutants_aqi_information'
-            ], 3);
-            await client.getAirQuality({lat:43.067475, lon: -89.392808, features:features});
-            sendStub.calledOnce.should.equal(true);
-            sendStub.calledWith(sinon.match({ qs:{ features: features.join() }  })).should.equal(true);
-        });
-        it('not array error', async ()=> {
-            let threw = false;
-            try {
-                await client.getAirQuality({lat:43.067475, lon: -89.392808, features:'foo'});
-            } catch (err){
-                threw = true;
-            }
-
-            threw.should.equal(true);
-        });
-        it('empty error', async ()=> {
-            let threw = false;
-            try {
-                await client.getAirQuality({lat:43.067475, lon: -89.392808, features: []});
-            } catch (err){
-                threw = true;
-            }
-
-            threw.should.equal(true);
-        });
-        it('invalid feature error', async ()=> {
-            let threw = false;
-            try {
-                await client.getAirQuality({lat:43.067475, lon: -89.392808, features: ['foo']});
-            } catch (err){
-                threw = true;
-            }
-
-            threw.should.equal(true);
-        });
-        it('duplicate feature error', async ()=> {
-            let threw = false;
-            try {
-                await client.getAirQuality({lat:43.067475, lon: -89.392808, features: ['breezometer_aqi', 'breezometer_aqi']});
+                await client.getCurrentFireConditions({lat:43.067475, lon: -89.392808, lang:'foo'});
             } catch (err){
                 threw = true;
             }
@@ -460,7 +475,7 @@ describe('getAirQuality', ()=>{
     });
     describe('metadata callback', () =>{
         it('undefined works', (done)=>{
-            client.getAirQuality({lat:43.067475, lon: -89.392808}, (err)=>{
+            client.getCurrentFireConditions({lat:43.067475, lon: -89.392808}, (err)=>{
                 should.not.exist(err);
                 sendStub.calledOnce.should.equal(true);
                 done();
@@ -468,7 +483,7 @@ describe('getAirQuality', ()=>{
         });
         it('matches', (done)=>{
             let metadata = _.sample([true, false]);
-            client.getAirQuality({lat:43.067475, lon: -89.392808, metadata:metadata}, (err)=>{
+            client.getCurrentFireConditions({lat:43.067475, lon: -89.392808, metadata:metadata}, (err)=>{
                 should.not.exist(err);
                 sendStub.calledOnce.should.equal(true);
                 sendStub.calledWith(sinon.match({ qs:{ metadata: metadata }  })).should.equal(true);
@@ -476,7 +491,7 @@ describe('getAirQuality', ()=>{
             });
         });
         it('not bool err', (done)=>{
-            client.getAirQuality({lat:43.067475, lon: -89.392808, metadata:'foo'}, (err)=>{
+            client.getCurrentFireConditions({lat:43.067475, lon: -89.392808, metadata:'foo'}, (err)=>{
                 should.exist(err);
                 done();
             });
@@ -484,19 +499,19 @@ describe('getAirQuality', ()=>{
     });
     describe('metadata promises', () =>{
         it('undefined works', async ()=>{
-            await client.getAirQuality({lat:43.067475, lon: -89.392808});
+            await client.getCurrentFireConditions({lat:43.067475, lon: -89.392808});
             sendStub.calledOnce.should.equal(true);
         });
         it('matches', async ()=>{
             let metadata = _.sample([true, false]);
-            await client.getAirQuality({lat:43.067475, lon: -89.392808, metadata:metadata});
+            await client.getCurrentFireConditions({lat:43.067475, lon: -89.392808, metadata:metadata});
             sendStub.calledOnce.should.equal(true);
             sendStub.calledWith(sinon.match({ qs:{ metadata: metadata }  })).should.equal(true);
         });
         it('not bool err', async ()=>{
             let threw = false;
             try {
-                await client.getAirQuality({lat:43.067475, lon: -89.392808, metadata:'foo'});
+                await client.getCurrentFireConditions({lat:43.067475, lon: -89.392808, metadata:'foo'});
             } catch (err){
                 threw = true;
             }
@@ -506,9 +521,10 @@ describe('getAirQuality', ()=>{
     });
     describe('key callback', ()=> {
         it('forbidden err', (done)=>{
-            client.getAirQuality({
+            client.getCurrentFireConditions({
                 lat:43.067475,
                 lon: -89.392808,
+                days: 1,
                 key: 'foo'
             }, (err)=>{
                 should.exist(err);
@@ -521,9 +537,10 @@ describe('getAirQuality', ()=>{
             let threw = false;
 
             try {
-                await client.getAirQuality({
+                await client.getCurrentFireConditions({
                     lat:43.067475,
                     lon: -89.392808,
+                    days: 1,
                     key: 'foo'
                 });
             } catch (err){

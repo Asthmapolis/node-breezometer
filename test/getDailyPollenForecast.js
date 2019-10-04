@@ -14,7 +14,7 @@ describe('getDailyPollenForecast', ()=> {
         let request = require('request-promise-native');
         sendStub = sandbox.stub().resolves({statusCode:200, body:{}});
         defaultsStub = sandbox.stub(request, 'defaults').returns(sendStub);
-        let breezometer   = require('../index.js');
+        let breezometer   = require('../lib/index.js');
         client = breezometer({ apiKey:'foo' });
         done();
     });
@@ -421,7 +421,7 @@ describe('getDailyPollenForecast', ()=> {
             });
         });
         it('matches', (done)=>{
-            let lang = _.sample(['en','fr']);
+            let lang = _.sample(['en']);
             client.getDailyPollenForecast({lat:43.067475, lon: -89.392808, days: 1, lang:lang}, (err)=>{
                 should.not.exist(err);
                 sendStub.calledOnce.should.equal(true);
@@ -442,7 +442,7 @@ describe('getDailyPollenForecast', ()=> {
             sendStub.calledOnce.should.equal(true);
         });
         it('matches', async ()=>{
-            let lang = _.sample(['en','fr']);
+            let lang = _.sample(['en']);
             await client.getDailyPollenForecast({lat:43.067475, lon: -89.392808, days: 1, lang:lang});
             sendStub.calledOnce.should.equal(true);
             sendStub.calledWith(sinon.match({ qs:{ lang: lang }  })).should.equal(true);
