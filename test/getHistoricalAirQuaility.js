@@ -15,7 +15,7 @@ describe('getHistoricalAirQuaility', ()=>{
         let request = require('request-promise-native');
         sendStub = sandbox.stub().resolves({statusCode:200, body:{}});
         defaultsStub = sandbox.stub(request, 'defaults').returns(sendStub);
-        let breezometer   = require('../index.js');
+        let breezometer   = require('../lib/index.js');
         client = breezometer({ apiKey:'foobar' });
         done();
     });
